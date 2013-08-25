@@ -1,69 +1,100 @@
 package com.friendlyblob.islandlife.server;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class GameServer extends Thread implements ActionListener{
-	private int serverPort = 8080;
-    private ServerSocket serverSocket = null;
-    private boolean isStopped = false;
-    private ExecutorService threadPool;
+import org.mmocore.network.SelectorConfig;
+import org.mmocore.network.SelectorThread;
+
+import com.friendlyblob.islandlife.server.network.GameClient;
+import com.friendlyblob.islandlife.server.network.GamePacketHandler;
+import com.friendlyblob.islandlife.server.network.ThreadPoolManager;
+import com.friendlyblob.islandlife.server.network.utils.IPv4Filter;
+
+public class GameServer{
+	private static final Logger log = Logger.getLogger(GameServer.class.getName());
+    public static GameServer gameServer;
     
-    public GameServer(int port){
-    	this.setName("Island Life Game Server");
-        this.serverPort = port;
-        threadPool = Executors.newFixedThreadPool(1000);
-    }
+    private final SelectorThread<GameClient> selectorThread;
+    private final GamePacketHandler gamePacketHandler;
     
-	@Override
-	public void run() {
-	    openServerSocket();
-        while(! isStopped){
-
-            Socket clientSocket = null;
-            
-            try {
-                clientSocket = this.serverSocket.accept();
-                this.serverSocket.accept();
-            } catch (IOException e){
-                if (isStopped){
-                    System.out.println("Server Stopped.");
-                    return;
-                }
-                throw new RuntimeException(
-                        "Error accepting client connection", e);
-            }
-            
-            this.threadPool.execute(
-                new Client(clientSocket));
-
-        }
-        this.threadPool.shutdown();
-        
+    public long getUsedMemoryMB(){
+		return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576; // ;
 	}
-	
-	private void openServerSocket(){
-        try {
-            this.serverSocket = new ServerSocket(this.serverPort);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot open port" + this.serverPort, e);
-        }
+    
+    public SelectorThread<GameClient> getSelectorThread(){
+		return selectorThread;
+	}
+    
+    public GamePacketHandler getGamePacketHandler()
+	{
+		return gamePacketHandler;
+	}
+    
+    public GameServer() throws Exception{
+    	gameServer = this;
+    	log.finest(getClass().getSimpleName() + ": used mem:" + getUsedMemoryMB() + "MB");
+    	
+    	ThreadPoolManager.getInstance();
+    	
+    	System.gc();
+		// maxMemory is the upper limit the jvm can use, totalMemory the size of
+		// the current allocation pool, freeMemory the unused memory in the
+		// allocation pool
+		long freeMem = ((Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()) + Runtime.getRuntime().freeMemory()) / 1048576;
+		long totalMem = Runtime.getRuntime().maxMemory() / 1048576;
+		log.info(getClass().getSimpleName() + ": Started, free memory " + freeMem + " Mb of " + totalMem + " Mb");
+		
+		final SelectorConfig sc = new SelectorConfig();
+		sc.MAX_READ_PER_PASS = Config.MMO_MAX_READ_PER_PASS;
+		sc.MAX_SEND_PER_PASS = Config.MMO_MAX_SEND_PER_PASS;
+		sc.SLEEP_TIME = Config.MMO_SELECTOR_SLEEP_TIME;
+		sc.HELPER_BUFFER_COUNT = Config.MMO_HELPER_BUFFER_COUNT;
+		sc.TCP_NODELAY = Config.MMO_TCP_NODELAY;
+		
+		gamePacketHandler = new GamePacketHandler();
+		selectorThread = new SelectorThread<>(sc, gamePacketHandler, gamePacketHandler, gamePacketHandler, new IPv4Filter());
+		
+		InetAddress bindAddress = null;
+		if (!Config.GAMESERVER_HOSTNAME.equals("*")) {
+			try {
+				bindAddress = InetAddress.getByName(Config.GAMESERVER_HOSTNAME);
+			} catch (UnknownHostException e1) {
+				log.log(Level.SEVERE, getClass().getSimpleName() + ": WARNING: The GameServer bind address is invalid, using all avaliable IPs. Reason: " + e1.getMessage(), e1);
+			}
+		}
+		
+		try {
+			selectorThread.openServerSocket(bindAddress, Config.PORT_GAME);
+		} catch (IOException e) {
+			log.log(Level.SEVERE, getClass().getSimpleName() + ": FATAL: Failed to open server socket. Reason: " + e.getMessage(), e);
+			System.exit(1);
+		}
+		
+		selectorThread.start();
+		
     }
-	
-	public static void main(String [] args){
-		GameServer server = new GameServer(8080);
-		GUI gui = new GUI(server);
-		server.start();
-	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		this.isStopped = true;
+	public static void main(String [] args) throws Exception {
+		Config.load();
+		
+		final String LOG_FOLDER = "log"; // Name of folder for log file
+		final String LOG_NAME = "log/log.cfg"; // Name of log file
+		
+		// Create log folder
+		File logFolder = new File(Config.DATAPACK_ROOT, LOG_FOLDER);
+		logFolder.mkdir();
+		
+		InputStream is = new FileInputStream(new File(LOG_NAME));
+		
+		DatabaseFactory.getInstance();
+		gameServer = new GameServer();
 	}
 
 }
