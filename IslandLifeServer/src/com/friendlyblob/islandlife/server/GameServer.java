@@ -43,6 +43,9 @@ public class GameServer{
     	
     	ThreadPoolManager.getInstance();
     	
+    	// Shutdown hook
+    	Runtime.getRuntime().addShutdownHook(Shutdown.getInstance());
+    	
     	System.gc();
 		// maxMemory is the upper limit the jvm can use, totalMemory the size of
 		// the current allocation pool, freeMemory the unused memory in the
@@ -78,6 +81,8 @@ public class GameServer{
 		}
 		
 		selectorThread.start();
+		
+		(new GUI()).execute();
 		
     }
 
