@@ -13,11 +13,9 @@ public class PacketHandler {
 		int opcode = buf.get() & 0xFF;
 		
 		ReceivablePacket response = null;
-
-		System.out.println("Packet Handler received packet");
 		
 		switch(opcode){
-			case 0x01:
+			case 0x5F:
 				response = new ServerResponse();
 				break;
 		}

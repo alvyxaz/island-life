@@ -8,7 +8,7 @@ public class ServerResponse extends ReceivablePacket{
 	
 	@Override
 	public boolean read() {
-		response = readS();
+		int lala = readD();
 		return true;
 	}
 

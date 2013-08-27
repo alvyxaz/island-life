@@ -2,6 +2,7 @@ package com.friendlyblob.islandlife.client.network;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,9 +33,6 @@ public class Connection extends Thread {
 	private final PacketHandler packetHandler;
 	
 	private final NioNetStackList<SendablePacket> sendQueue;
-	
-	private final WritableByteChannel writableByteChannel;
-	private final ReadableByteChannel readableByteChannel;
 	
 	// Main Buffers
 	private final ByteBuffer DIRECT_WRITE_BUFFER;
@@ -67,6 +65,7 @@ public class Connection extends Thread {
 	private volatile boolean pendingClose;
 	
 	private final OutputStream outputStream;
+	private final InputStream inputStream;
 	
 	public Connection(final PacketHandler packetHandler, String host, int port) throws IOException{
 		super.setName("PacketHandlerThread-" + super.getId());
@@ -82,6 +81,7 @@ public class Connection extends Thread {
         }
 		
 		outputStream = serverSocket.getOutputStream();
+		inputStream = serverSocket.getInputStream();
 		
 		crypt = new GameCrypt();
 		
@@ -91,9 +91,6 @@ public class Connection extends Thread {
 		WRITE_BUFFER = ByteBuffer.wrap(new byte[WRITE_BUFFER_SIZE]).order(BYTE_ORDER);
 		READ_BUFFER = ByteBuffer.wrap(new byte[READ_BUFFER_SIZE]).order(BYTE_ORDER);
 		STRING_BUFFER = new NioNetStringBuffer(64 * 1024);
-		
-		writableByteChannel = serverSocket.getChannel();
-		readableByteChannel = serverSocket.getChannel();
 		
 		sendQueue = new NioNetStackList<>();
 		
@@ -110,13 +107,18 @@ public class Connection extends Thread {
 	
 	final int write(final ByteBuffer buf) throws IOException {
 		byte temp [] = new byte [buf.remaining()];
+		
 		buf.get(temp);
 		outputStream.write(temp);
+
 		return 0;
 	}
 	
+	byte temp [] = new byte[1024]; // TODO optimize, improve, etc
 	final int read(final ByteBuffer buf) throws IOException {
-		return readableByteChannel.read(buf);
+		int amountRead = inputStream.read(temp);
+		buf.put(temp, 0, amountRead);
+		return amountRead;
 	}
 	
 	public boolean kazkas = false;
@@ -299,7 +301,7 @@ public class Connection extends Thread {
 	}
 	
 	public void execute(ReceivablePacket packet) {
-
+		packet.run();
 	}
 	
 	public boolean decrypt(ByteBuffer buf, int size) {

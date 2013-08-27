@@ -8,8 +8,8 @@ public class Dummy extends BaseSendablePacket{
 
 	public Dummy() {
 		writeC(0x09);
+		writeD(5);
 		writeS("Alvys");
-		writeS("Posk");
 	}
 	
 	@Override

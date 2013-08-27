@@ -81,13 +81,14 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 		return getStats().dropPacket();
 	}
 	
-	public void sendPacket(ServerPacket ServerPacket) {
-		if (ServerPacket == null) {
+	public void sendPacket(ServerPacket serverPacket) {
+		if (serverPacket == null) {
 			return;
 		}
 		
-		getConnection().sendPacket(ServerPacket);
-		ServerPacket.runImpl();
+		getConnection().sendPacket(serverPacket);
+
+		serverPacket.runImpl();
 	}
 	
 	public void close(ServerPacket ServerPacket) {

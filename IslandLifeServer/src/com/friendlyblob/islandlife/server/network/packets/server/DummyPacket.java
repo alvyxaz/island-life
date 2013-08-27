@@ -4,8 +4,8 @@ public class DummyPacket extends ServerPacket{
 
 	@Override
 	protected void write() {
-		writeC(0x01);
-		writeS("Pavyko!");
+		writeC(0x5F);
+		writeD(5);
 	}
 
 }
