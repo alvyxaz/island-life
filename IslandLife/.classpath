@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libs/gdx.jar" sourcepath="libs/gdx-sources.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-tools.jar"/>
 	<classpathentry kind="lib" path="libs/mmocore.jar"/>
+	<classpathentry kind="lib" path="libs/javolution-5.5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

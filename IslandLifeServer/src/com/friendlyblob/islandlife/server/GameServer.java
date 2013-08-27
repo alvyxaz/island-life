@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,6 +83,7 @@ public class GameServer{
 		
 		selectorThread.start();
 		
+		// GUI thread
 		(new GUI()).execute();
 		
     }
@@ -92,11 +94,9 @@ public class GameServer{
 		final String LOG_FOLDER = "log"; // Name of folder for log file
 		final String LOG_NAME = "log/log.cfg"; // Name of log file
 		
-		// Create log folder
-		File logFolder = new File(Config.DATAPACK_ROOT, LOG_FOLDER);
-		logFolder.mkdir();
+		FileHandler fh = new FileHandler(LOG_FOLDER+"/serverLog.log"); 
 		
-		InputStream is = new FileInputStream(new File(LOG_NAME));
+		Logger.getLogger(GamePacketHandler.class.getName()).addHandler(fh);
 		
 		DatabaseFactory.getInstance();
 		gameServer = new GameServer();

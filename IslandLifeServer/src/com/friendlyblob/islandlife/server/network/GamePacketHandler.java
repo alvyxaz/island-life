@@ -10,6 +10,8 @@ import org.mmocore.network.MMOConnection;
 import org.mmocore.network.ReceivablePacket;
 
 import com.friendlyblob.islandlife.server.network.GameClient.GameClientState;
+import com.friendlyblob.islandlife.server.network.packets.client.ClientPacket;
+import com.friendlyblob.islandlife.server.network.packets.client.ResponseTest;
 
 
 public class GamePacketHandler implements IPacketHandler<GameClient>, 
@@ -41,8 +43,15 @@ public class GamePacketHandler implements IPacketHandler<GameClient>,
 		ReceivablePacket<GameClient> response = null;
 		GameClientState state = client.getState();
 		
-		switch (state)
-		{
+		switch (opcode) {
+			case 0x0C:
+				// TODO remove
+				response = new ResponseTest();
+				log.info("Packet received");
+				break;
+		}
+		
+		switch (state) {
 			case CONNECTED:
 				break;
 			case AUTHORIZED:
@@ -50,6 +59,8 @@ public class GamePacketHandler implements IPacketHandler<GameClient>,
 			case IN_GAME:
 				break;
 		}
+		
+		// TODO has to be able to go through with null for response
 		
 		return response;
 	} 

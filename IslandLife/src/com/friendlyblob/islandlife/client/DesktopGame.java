@@ -3,6 +3,9 @@ package com.friendlyblob.islandlife.client;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
 import com.badlogic.gdx.tools.imagepacker.TexturePacker2.Settings;
+import com.friendlyblob.islandlife.client.network.Connection;
+import com.friendlyblob.islandlife.client.network.PacketHandler;
+import com.friendlyblob.islandlife.client.network.packets.DummyPacket;
 
 public class DesktopGame {
 	public static void main (String[] args) {
@@ -14,6 +17,15 @@ public class DesktopGame {
 		ActionResolver actionResolver = new ActionResolverDesktop();
 		MyGame game = new MyGame(new GoogleDesktop(), actionResolver);
 		game.ads = new AdsDesktop();
+		
+		try {
+			Connection connection = new Connection(new PacketHandler(), "localhost", 7777);
+			connection.start();
+			connection.sendPacket(new DummyPacket());
+		} catch (Exception e){
+			System.out.println();
+		}
+		
 		
 		((GoogleDesktop)game.google).game = game;
         new LwjglApplication(game, "Game", (int) 480, 800, false);

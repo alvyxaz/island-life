@@ -15,9 +15,9 @@ import org.mmocore.network.MMOConnection;
 import org.mmocore.network.ReceivablePacket;
 
 import com.friendlyblob.islandlife.server.Config;
-import com.friendlyblob.islandlife.server.network.packets.ActionFailed;
-import com.friendlyblob.islandlife.server.network.packets.GameServerPacket;
 import com.friendlyblob.islandlife.server.network.packets.ServerClose;
+import com.friendlyblob.islandlife.server.network.packets.server.ActionFailed;
+import com.friendlyblob.islandlife.server.network.packets.server.ServerPacket;
 
 public class GameClient extends MMOClient<MMOConnection<GameClient>> implements Runnable{
 	protected static final Logger log = Logger.getLogger(GameClient.class.getName());
@@ -40,7 +40,7 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 	private final ArrayBlockingQueue<ReceivablePacket<GameClient>> packetQueue;
 	private final ReentrantLock queueLock = new ReentrantLock();
 	
-	private GameServerPacket aditionalClosePacket;
+	private ServerPacket aditionalClosePacket;
 	
 	private final GameCrypt crypt;
 	
@@ -51,12 +51,13 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 		packetQueue = new ArrayBlockingQueue<>(Config.CLIENT_PACKET_QUEUE_SIZE);
 		crypt = new GameCrypt();
 		
-		
 		try {
 			address = con != null ? con.getInetAddress() : InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
 			throw new Error("Unable to determine localhost address.");
 		}
+		
+		state = GameClientState.CONNECTED;
 	}
 	
 	public byte[] enableCrypt()
@@ -80,37 +81,37 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 		return getStats().dropPacket();
 	}
 	
-	public void sendPacket(GameServerPacket gameServerPacket) {
-		if (gameServerPacket == null) {
+	public void sendPacket(ServerPacket ServerPacket) {
+		if (ServerPacket == null) {
 			return;
 		}
 		
-		getConnection().sendPacket(gameServerPacket);
-		gameServerPacket.runImpl();
+		getConnection().sendPacket(ServerPacket);
+		ServerPacket.runImpl();
 	}
 	
-	public void close(GameServerPacket gameServerPacket) {
+	public void close(ServerPacket ServerPacket) {
 		if (getConnection() == null) {
 			return; // ofline shop
 		}
 		
 		if (aditionalClosePacket != null) {
-			getConnection().close(new GameServerPacket[] {
+			getConnection().close(new ServerPacket[] {
 				aditionalClosePacket,
-				gameServerPacket
+				ServerPacket
 			});
 		} else {
-			getConnection().close(gameServerPacket);
+			getConnection().close(ServerPacket);
 		}
 	}
 	
-	public void close(GameServerPacket[] gameServerPacketArray)
+	public void close(ServerPacket[] ServerPacketArray)
 	{
 		if (getConnection() == null) {
 			return; // ofline shop
 		}
 		
-		getConnection().close(gameServerPacketArray);
+		getConnection().close(ServerPacketArray);
 	}
 
 	@Override
@@ -164,7 +165,6 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 
 		try {
 			// TODO: Execute disconnect task
-			System.out.println("DC :O");
 		} catch (RejectedExecutionException e) {
 			
 		}
@@ -286,11 +286,11 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 					closeNow();
 					return;
 				}
-				// TODO ThreadPoolManager.getInstance().executeIOPacket(this);
+				ThreadPoolManager.getInstance().executeIOPacket(this);
 			}
 			else
 			{
-				// TODO ThreadPoolManager.getInstance().executePacket(this);
+				ThreadPoolManager.getInstance().executePacket(this);
 			}
 		}
 		catch (RejectedExecutionException e)
