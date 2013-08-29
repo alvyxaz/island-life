@@ -1,6 +1,5 @@
 package com.friendlyblob.islandlife.server.network.packets;
 
-import com.friendlyblob.islandlife.server.network.packets.server.ServerPacket;
 
 
 public class ServerClose extends ServerPacket {

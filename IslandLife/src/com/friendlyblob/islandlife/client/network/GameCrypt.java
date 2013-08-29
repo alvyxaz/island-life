@@ -33,6 +33,10 @@ public class GameCrypt
 		System.arraycopy(key, 0, _outKey, 0, 16);
 	}
 	
+	public void enable(){
+		_isEnabled = true;
+	}
+	
 	public void decrypt(byte[] raw, final int offset, final int size)
 	{
 		if (!_isEnabled)
@@ -65,7 +69,6 @@ public class GameCrypt
 	{
 		if (!_isEnabled)
 		{
-			_isEnabled = true;
 			return;
 		}
 		

@@ -1,4 +1,4 @@
-package com.friendlyblob.islandlife.server.network.packets.server;
+package com.friendlyblob.islandlife.server.network.packets;
 
 import java.nio.ByteBuffer;
 

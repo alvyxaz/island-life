@@ -6,6 +6,7 @@ import com.badlogic.gdx.tools.imagepacker.TexturePacker2.Settings;
 import com.friendlyblob.islandlife.client.network.Connection;
 import com.friendlyblob.islandlife.client.network.PacketHandler;
 import com.friendlyblob.islandlife.client.network.packets.DummyPacket;
+import com.friendlyblob.islandlife.client.network.packets.client.Version;
 
 public class DesktopGame {
 	public static void main (String[] args) {
@@ -21,7 +22,7 @@ public class DesktopGame {
 		try {
 			Connection connection = new Connection(new PacketHandler(), "localhost", 7777);
 			connection.start();
-			connection.sendPacket(new DummyPacket());
+			connection.sendPacket(new Version(5));
 		} catch (Exception e){
 			System.out.println();
 		}

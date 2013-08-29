@@ -41,7 +41,6 @@ public class Connection extends Thread {
 	// String Buffer
 	private final NioNetStringBuffer STRING_BUFFER;
 	
-	
 	public int READ_BUFFER_SIZE = 64 * 1024;
 	public int WRITE_BUFFER_SIZE = 64 * 1024;
 	
@@ -105,12 +104,15 @@ public class Connection extends Thread {
 
 	}
 	
+	int kakis = 0;
+	
 	final int write(final ByteBuffer buf) throws IOException {
 		byte temp [] = new byte [buf.remaining()];
-		
+
 		buf.get(temp);
 		outputStream.write(temp);
-
+		
+		kakis++;
 		return 0;
 	}
 	
@@ -120,6 +122,7 @@ public class Connection extends Thread {
 		buf.put(temp, 0, amountRead);
 		return amountRead;
 	}
+	
 	
 	public boolean kazkas = false;
 	
@@ -232,6 +235,7 @@ public class Connection extends Thread {
 				}
 				return false;
 			default:
+				
 				// data size excluding header size :>
 				final int dataPending = (buf.getShort() & 0xFFFF) - HEADER_SIZE;
 				
@@ -243,7 +247,7 @@ public class Connection extends Thread {
 						parseClientPacket(pos, buf, dataPending);
 						buf.position(pos + dataPending);
 					}
-					
+
 					// if we are done with this buffer
 					if (!buf.hasRemaining()) {
 						if (buf != READ_BUFFER) {
@@ -254,12 +258,15 @@ public class Connection extends Thread {
 						}
 						return false;
 					}
+					
 					return true;
 				}
 				
 				// we don`t have enough bytes for the dataPacket so we need
 				// to read
 //				key.interestOps(key.interestOps() | SelectionKey.OP_READ);
+				
+				
 				
 				// did we use the READ_BUFFER ?
 				if (buf == READ_BUFFER) {
@@ -276,6 +283,8 @@ public class Connection extends Thread {
 	}
 	
 	private final void parseClientPacket(final int pos, final ByteBuffer buf, final int dataSize) {
+		
+		
 		final boolean ret = decrypt(buf, dataSize);
 		
 		if (ret && buf.hasRemaining())
@@ -284,6 +293,7 @@ public class Connection extends Thread {
 			final int limit = buf.limit();
 			buf.limit(pos + dataSize);
 			final ReceivablePacket cp = packetHandler.handlePacket(buf);
+			cp.setConnection(this);
 			
 			if (cp != null) {
 				cp.buf = buf;
@@ -569,6 +579,10 @@ public class Connection extends Thread {
 	
 	public final void shutdown(){
 		shutdown = true;
+	}
+	
+	public GameCrypt getCrypt(){
+		return crypt;
 	}
 	
 }

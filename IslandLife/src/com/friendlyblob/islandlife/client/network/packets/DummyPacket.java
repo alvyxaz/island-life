@@ -5,7 +5,8 @@ public class DummyPacket extends SendablePacket {
 	@Override
 	public void write() {
 		writeC(0x0C);
-		writeS("I SERVA");
+		writeD(8);
+		writeD(8);
 	}
 
 }

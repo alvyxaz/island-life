@@ -1,9 +1,8 @@
-package com.friendlyblob.islandlife.server.network.packets.client;
+package com.friendlyblob.islandlife.server.network.packets;
 
 import org.mmocore.network.ReceivablePacket;
 
 import com.friendlyblob.islandlife.server.network.GameClient;
-import com.friendlyblob.islandlife.server.network.packets.server.ServerPacket;
 
 public abstract class ClientPacket extends ReceivablePacket<GameClient> {
 

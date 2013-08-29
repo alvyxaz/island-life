@@ -16,8 +16,9 @@ import org.mmocore.network.ReceivablePacket;
 
 import com.friendlyblob.islandlife.server.Config;
 import com.friendlyblob.islandlife.server.network.packets.ServerClose;
+import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
 import com.friendlyblob.islandlife.server.network.packets.server.ActionFailed;
-import com.friendlyblob.islandlife.server.network.packets.server.ServerPacket;
+import com.friendlyblob.islandlife.server.network.packets.server.KeyPacket;
 
 public class GameClient extends MMOClient<MMOConnection<GameClient>> implements Runnable{
 	protected static final Logger log = Logger.getLogger(GameClient.class.getName());
@@ -56,7 +57,7 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 		} catch (UnknownHostException e) {
 			throw new Error("Unable to determine localhost address.");
 		}
-		
+
 		state = GameClientState.CONNECTED;
 	}
 	

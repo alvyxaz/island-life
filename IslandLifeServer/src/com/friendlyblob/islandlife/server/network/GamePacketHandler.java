@@ -10,8 +10,7 @@ import org.mmocore.network.MMOConnection;
 import org.mmocore.network.ReceivablePacket;
 
 import com.friendlyblob.islandlife.server.network.GameClient.GameClientState;
-import com.friendlyblob.islandlife.server.network.packets.client.ClientPacket;
-import com.friendlyblob.islandlife.server.network.packets.client.ResponseTest;
+import com.friendlyblob.islandlife.server.network.packets.client.*;
 
 
 public class GamePacketHandler implements IPacketHandler<GameClient>, 
@@ -44,10 +43,11 @@ public class GamePacketHandler implements IPacketHandler<GameClient>,
 		GameClientState state = client.getState();
 		
 		switch (opcode) {
-			case 0x0C:
-				// TODO remove
-				response = new ResponseTest();
-				log.info("Packet received");
+			case 0x01:
+				response = new ClientVersion();
+				break;
+			case 0x02:
+				response = new LoginPacket();
 				break;
 		}
 		

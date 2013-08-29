@@ -2,17 +2,20 @@ package com.friendlyblob.islandlife.server.network.packets.server;
 
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
 
+public class KeyPacket extends ServerPacket {
 
-public class ServerClose extends ServerPacket {
+	byte [] key;
 	
-	public static final ServerClose STATIC_PACKET = new ServerClose();
-	
-	private ServerClose() {
+	public KeyPacket( byte [] key) {
+		this.key = key;
 	}
-
+	
 	@Override
 	protected void write() {
-		writeC(0x20);
+		writeC(0x02);
+		for(int i = 0; i < 8; i++){
+			writeC(key[i]);
+		}
 	}
-
+	
 }
