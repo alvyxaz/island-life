@@ -42,17 +42,16 @@ public class GamePacketHandler implements IPacketHandler<GameClient>,
 		ReceivablePacket<GameClient> response = null;
 		GameClientState state = client.getState();
 		
-		switch (opcode) {
-			case 0x01:
-				response = new ClientVersion();
-				break;
-			case 0x02:
-				response = new LoginPacket();
-				break;
-		}
-		
 		switch (state) {
 			case CONNECTED:
+				switch (opcode) {
+					case 0x01:
+						response = new ClientVersion();
+						break;
+					case 0x02:
+						response = new LoginPacket();
+						break;
+				}
 				break;
 			case AUTHORIZED:
 				break;
