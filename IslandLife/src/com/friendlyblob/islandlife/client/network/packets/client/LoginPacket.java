@@ -7,8 +7,8 @@ public class LoginPacket extends SendablePacket{
 	@Override
 	public void write() {
 		writeC(0x02);
-		writeS("Prisijungimas");
-		writeS("Slaptazodis");
+		writeS("loginas");
+		writeS("labas");
 	}
 
 }
