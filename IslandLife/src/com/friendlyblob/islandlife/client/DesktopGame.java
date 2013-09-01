@@ -20,15 +20,14 @@ public class DesktopGame {
 		game.ads = new AdsDesktop();
 		
 		try {
-			Connection connection = new Connection(new PacketHandler(), "localhost", 7777);
-			connection.start();
-			connection.sendPacket(new Version(5));
+//			Connection connection = new Connection(new PacketHandler(), "localhost", 7777);
+//			connection.start();
+//			connection.sendPacket(new Version(5));
 		} catch (Exception e){
 			System.out.println();
 		}
 		
-		
 		((GoogleDesktop)game.google).game = game;
-        new LwjglApplication(game, "Game", (int) 480, 800, false);
+        new LwjglApplication(game, "Game", (int) 800, 480, false);
 	}
 }

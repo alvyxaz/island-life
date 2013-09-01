@@ -16,10 +16,10 @@ import com.friendlyblob.islandlife.client.screens.GameScreen;
 import com.friendlyblob.islandlife.client.screens.LoadingScreen;
 
 public class MyGame extends Game implements ApplicationListener {
-	public static int SCREEN_WIDTH = 480;
-	public static int SCREEN_HEIGHT = 800;
-	public static int SCREEN_HALF_WIDTH = 240;
-	public static int SCREEN_HALF_HEIGHT = 400;
+	public static int SCREEN_WIDTH = 800;
+	public static int SCREEN_HEIGHT = 480;
+	public static int SCREEN_HALF_WIDTH;
+	public static int SCREEN_HALF_HEIGHT;
 	public static Rectangle SCREEN_RECTANGLE;
 	public static boolean isAndroid;
 	public static Random random;
