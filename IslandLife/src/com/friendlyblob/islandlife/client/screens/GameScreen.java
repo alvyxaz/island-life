@@ -6,40 +6,18 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.controls.Input;
 import com.friendlyblob.islandlife.client.entities.Player;
+import com.friendlyblob.islandlife.client.gameworld.GameWorld;
+import com.friendlyblob.islandlife.client.gameworld.Map;
 import com.friendlyblob.islandlife.client.helpers.Assets;
-import com.friendlyblob.islandlife.client.map.Map;
 import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
 
 public class GameScreen extends BaseScreen{
-
-	/*-------------------------------------
-	 * Camera
-	 */
-	private OrthographicCamera worldCam;
-	
-	/*-------------------------------------
-	 * Entities
-	 */
-	private Map map;
-	private Player player;
+	private GameWorld world;
 	
 	public GameScreen(MyGame game) {
 		super(game);
 		
-		/*--------------------------------
-		 * World camera setup
-		 */
-		worldCam = new OrthographicCamera(MyGame.SCREEN_WIDTH, MyGame.SCREEN_HEIGHT);
-		worldCam.translate(MyGame.SCREEN_WIDTH/2, MyGame.SCREEN_HEIGHT/2);
-		worldCam.update();
-		
-		/*
-		 * Entities initialization
-		 */
-		map = Map.getInstance();
-		map.load(worldCam);
-		
-		player = new Player(50, 50);
+		world = new GameWorld();
 	}
 
 	@Override
@@ -48,11 +26,7 @@ public class GameScreen extends BaseScreen{
 		/*---------------------------------------
 		 * World
 		 */
-		spriteBatch.setProjectionMatrix(worldCam.combined);
-		
-		map.draw(spriteBatch);
-		
-		player.draw(spriteBatch);
+		world.draw(spriteBatch);
 		
 		/*---------------------------------------
 		 * GUI Elements
@@ -70,7 +44,7 @@ public class GameScreen extends BaseScreen{
 	
 	@Override
 	public void update(float deltaTime) {
-		map.update(deltaTime);
+		world.update(deltaTime);
 		
 		if (!MapEditor.enabled) {
 			updateGameplayInput();
@@ -82,7 +56,7 @@ public class GameScreen extends BaseScreen{
 	 */
 	public void updateGameplayInput() {
 		if (Input.isReleasing()) {
-			player.moveTo(map.toWorldX(Input.getX()), map.toWorldY(Input.getY()));
+			world.getPlayer().moveTo(world.toWorldX(Input.getX()), world.toWorldY(Input.getY()));
 		}
 	}
 

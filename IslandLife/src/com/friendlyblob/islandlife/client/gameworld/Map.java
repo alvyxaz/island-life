@@ -1,4 +1,4 @@
-package com.friendlyblob.islandlife.client.map;
+package com.friendlyblob.islandlife.client.gameworld;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -27,6 +27,8 @@ public class Map {
 	private Vector3 camPos;
 	
 	private static Vector2 tileTarget = new Vector2(); 
+	
+	private GameWorld world;
 	
 	public Map() {
 		/*
@@ -110,19 +112,13 @@ public class Map {
 		tileTarget.x = Math.max(Math.min(tileTarget.x, tiles[0].length-1), 0);
 		tileTarget.y = Math.max(Math.min(tileTarget.y, tiles.length-1), 0);
 	}
-
-	/*
-	 * Translate screen x coordinates to world x coordinate
-	 */
-	public int toWorldX(int x) {
-		return (int)(x*worldCam.zoom + camPos.x-MyGame.SCREEN_HALF_WIDTH);
+	
+	public void setWorld(GameWorld gameWorld) {
+		world = gameWorld;
 	}
 	
-	/*
-	 * Translate screen y coordinates to world y coordinate
-	 */
-	public int toWorldY(int y) {
-		return (int)(y*worldCam.zoom +  camPos.y-MyGame.SCREEN_HALF_HEIGHT);
+	public Vector3 getCamPos() {
+		return camPos;
 	}
 	
 	public void load(OrthographicCamera worldCam) {
@@ -140,5 +136,4 @@ public class Map {
 	public static class SingletonHolder {
 		public static final Map INSTANCE = new Map();
 	}
-	
 }
