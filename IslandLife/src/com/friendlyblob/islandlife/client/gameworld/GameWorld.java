@@ -2,10 +2,10 @@ package com.friendlyblob.islandlife.client.gameworld;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
 import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.entities.MovableObject;
 import com.friendlyblob.islandlife.client.entities.Player;
+import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
 
 public class GameWorld {
 	/*-------------------------------------
@@ -44,7 +44,9 @@ public class GameWorld {
 		player.update(deltaTime);
 		map.update(deltaTime);
 		
-		cameraFollowPlayer(deltaTime);
+		if (!MapEditor.enabled){
+			cameraFollowPlayer(deltaTime);
+		}
 	}
 	
 	public void draw(SpriteBatch sb) {
