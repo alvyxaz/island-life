@@ -55,6 +55,9 @@ public class GameScreen extends BaseScreen{
 	
 	@Override
 	public void update(float deltaTime) {
+		
+		map.update(deltaTime);
+		
 		// Camera controls
 		final int cameraSpeed = 1000;
 		if(Gdx.input.isKeyPressed(Keys.A)){
