@@ -14,23 +14,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.friendlyblob.islandlife.client.helpers.Assets;
 
-public class Player {
-
-	// Physics
-	public Body body;
-	
-	private int width;
-	private int height;
-	
-	private int xVelocity = 100;
-	
-	public Rectangle hitBox;
-	
-	private int targetX;
-	private int targetY;
+public class Player extends MovableObject{
 
 	public Player (int x, int y){
-		hitBox = new Rectangle(x, y, 32, 64);
+		super(x, y);
 	}
 
 	public void regenerate(int x, int y){
@@ -38,7 +25,7 @@ public class Player {
 	}
 	
 	public void update(float deltaTime){
-
+		super.update(deltaTime);
 	}
 	
 	public void draw(SpriteBatch spriteBatch){
@@ -47,8 +34,6 @@ public class Player {
 		spriteBatch.setColor(Color.WHITE);
 	}
 	
-	public void moveTo (int x, int y) {
-		
-	}
+	
 	
 }

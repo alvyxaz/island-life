@@ -9,6 +9,7 @@ public class LoginPacket extends SendablePacket{
 		writeC(0x02);
 		writeS("loginas");
 		writeS("labas");
+		// TODO hash password before sending
 	}
 
 }
