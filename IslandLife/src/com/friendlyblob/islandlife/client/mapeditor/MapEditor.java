@@ -1,5 +1,59 @@
 package com.friendlyblob.islandlife.client.mapeditor;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.friendlyblob.islandlife.client.MyGame;
+import com.friendlyblob.islandlife.client.helpers.Assets;
+
 public class MapEditor {
+	public static boolean enabled = true;
+	
 	public static int tileTextureSelected = 1; // Tile texture index
+	
+	/*
+	 * Method that allows moving camera freely. Used when map editor is enabled
+	 */
+	public static void cameraUpdate(OrthographicCamera worldCam, float deltaTime) {
+		final int cameraSpeed = 1000;
+		if(Gdx.input.isKeyPressed(Keys.A)){
+			worldCam.position.x -= cameraSpeed * deltaTime;
+		}
+		if(Gdx.input.isKeyPressed(Keys.D)){
+			worldCam.position.x += cameraSpeed * deltaTime;
+		}
+		if(Gdx.input.isKeyPressed(Keys.W)){
+			worldCam.position.y += cameraSpeed * deltaTime;
+		}
+		if(Gdx.input.isKeyPressed(Keys.S)){
+			worldCam.position.y -= cameraSpeed * deltaTime;
+		}
+		if(Gdx.input.isKeyPressed(Keys.UP)){
+			worldCam.zoom -= deltaTime*2;
+		}
+		if(Gdx.input.isKeyPressed(Keys.DOWN)){
+			worldCam.zoom += deltaTime*2;
+		}
+		worldCam.update();
+	}
+	
+	public static void drawInfo(SpriteBatch spriteBatch){
+		// TODO String builder, or make sure android does not execute this
+		Assets.defaultFont.drawWrapped(spriteBatch, 
+				"Map editor mode (F1)\n " +
+				"Texture selected: " + tileTextureSelected, 
+				MyGame.SCREEN_HALF_WIDTH, 
+				MyGame.SCREEN_HEIGHT-20, 
+				MyGame.SCREEN_HALF_WIDTH-20, 
+				HAlignment.RIGHT);
+	}
+	
+	/*
+	 * Method for turning map editor on and off 
+	 */
+	public static void toggle(){
+		enabled = !enabled;
+	}
 }

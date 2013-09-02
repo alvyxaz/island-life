@@ -1,6 +1,7 @@
 package com.friendlyblob.islandlife.client.map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -64,13 +65,24 @@ public class Map {
 					spriteBatch.draw(tileTextures[tiles[y][x]], x*TILE_WIDTH + y%2 * TILE_WIDTH/2, y * TILE_HEIGHT/2);
 			}
 		}
-	
 	}
 	
 	public void update(float deltaTime) {
 		if (Gdx.input.isTouched()) {
-			updateTileTarget();
-			tiles[(int)tileTarget.y][(int)tileTarget.x] = MapEditor.tileTextureSelected;
+			updateTileTarget(); // Target is not MapEditor specific
+		}	
+		
+		// Toggle map editor with F1 key
+		if (Input.keyReleased(Keys.F1)){
+			MapEditor.toggle();
+		}
+		
+		// Map editor related updates
+		if (MapEditor.enabled){
+			MapEditor.cameraUpdate(worldCam, deltaTime);
+			if (Gdx.input.isTouched()) {
+				tiles[(int)tileTarget.y][(int)tileTarget.x] = MapEditor.tileTextureSelected;
+			}
 		}
 	}
 	
@@ -99,6 +111,20 @@ public class Map {
 		tileTarget.y = Math.max(Math.min(tileTarget.y, tiles.length-1), 0);
 	}
 
+	/*
+	 * Translate screen x coordinates to world x coordinate
+	 */
+	public int toWorldX(int x) {
+		return (int)(x*worldCam.zoom + camPos.x-MyGame.SCREEN_HALF_WIDTH);
+	}
+	
+	/*
+	 * Translate screen y coordinates to world y coordinate
+	 */
+	public int toWorldY(int y) {
+		return (int)(y*worldCam.zoom +  camPos.y-MyGame.SCREEN_HALF_HEIGHT);
+	}
+	
 	public void load(OrthographicCamera worldCam) {
 		this.worldCam = worldCam;
 		camPos = worldCam.position;

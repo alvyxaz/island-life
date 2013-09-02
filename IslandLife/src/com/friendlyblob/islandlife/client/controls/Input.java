@@ -145,6 +145,7 @@ public class Input {
 		return -1;
 	}
 	
+	// TODO cleanup tracked keys before publishing
 	public static void initialize(){
 		touch = new Touch[2];
 		
@@ -154,7 +155,7 @@ public class Input {
 			touch[i] = new Touch();
 		
 		keys = new KeyboardKey[6];
-		keys[0] = new KeyboardKey(Keys.F12);
+		keys[0] = new KeyboardKey(Keys.F1);
 		keys[1] = new KeyboardKey(Keys.PLUS);
 		keys[2] = new KeyboardKey(Keys.MINUS);
 		keys[3] = new KeyboardKey(Keys.G);

@@ -28,13 +28,11 @@ public class LoadingScreen extends BaseScreen{
 
 	@Override
 	public void update(float deltaTime) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void prepare() {
-		// TODO Auto-generated method stub
 		
 	}
 
