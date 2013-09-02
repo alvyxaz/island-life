@@ -60,17 +60,16 @@ public class Map {
 		
 		for (int y = startY; y < endY; y++){
 			for(int x = startX; x < endX; x++){
-				spriteBatch.draw(tileTextures[tiles[y][x]], x*TILE_WIDTH + y%2 * TILE_WIDTH/2, y * TILE_HEIGHT/2);
+				if (y < tiles.length && y >= 0 && x < tiles[y].length && x >= 0)
+					spriteBatch.draw(tileTextures[tiles[y][x]], x*TILE_WIDTH + y%2 * TILE_WIDTH/2, y * TILE_HEIGHT/2);
 			}
 		}
 	
 	}
 	
 	public void update(float deltaTime) {
-		updateTileTarget();
-		
 		if (Gdx.input.isTouched()) {
-			System.out.println(tileTarget.y);
+			updateTileTarget();
 			tiles[(int)tileTarget.y][(int)tileTarget.x] = MapEditor.tileTextureSelected;
 		}
 	}
@@ -95,6 +94,9 @@ public class Map {
 			}
 			tileTarget.y--;
 		}
+		
+		tileTarget.x = Math.max(Math.min(tileTarget.x, tiles[0].length-1), 0);
+		tileTarget.y = Math.max(Math.min(tileTarget.y, tiles.length-1), 0);
 	}
 
 	public void load(OrthographicCamera worldCam) {
