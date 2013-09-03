@@ -181,11 +181,12 @@ public class ThreadPoolManager {
 	public void shutdown(){
 		shutdown = true;
 		try {
-			effectsScheduledThreadPool.awaitTermination(1, TimeUnit.SECONDS);
-			generalScheduledThreadPool.awaitTermination(1, TimeUnit.SECONDS);
-			generalPacketsThreadPool.awaitTermination(1, TimeUnit.SECONDS);
-			ioPacketsThreadPool.awaitTermination(1, TimeUnit.SECONDS);
-			generalThreadPool.awaitTermination(1, TimeUnit.SECONDS);
+			int timeout = 0; // TODO change to 1 for safety
+			effectsScheduledThreadPool.awaitTermination(timeout, TimeUnit.SECONDS);
+			generalScheduledThreadPool.awaitTermination(timeout, TimeUnit.SECONDS);
+			generalPacketsThreadPool.awaitTermination(timeout, TimeUnit.SECONDS);
+			ioPacketsThreadPool.awaitTermination(timeout, TimeUnit.SECONDS);
+			generalThreadPool.awaitTermination(timeout, TimeUnit.SECONDS);
 			effectsScheduledThreadPool.shutdown();
 			generalScheduledThreadPool.shutdown();
 			generalPacketsThreadPool.shutdown();

@@ -44,6 +44,9 @@ public class GameServer{
     	
     	ThreadPoolManager.getInstance();
     	
+    	GameTimeController.initialize();
+    	
+    	
     	// Shutdown hook
     	Runtime.getRuntime().addShutdownHook(Shutdown.getInstance());
     	
@@ -55,6 +58,7 @@ public class GameServer{
 		long totalMem = Runtime.getRuntime().maxMemory() / 1048576;
 		log.info(getClass().getSimpleName() + ": Started, free memory " + freeMem + " Mb of " + totalMem + " Mb");
 		
+		// Packet selector configuration
 		final SelectorConfig sc = new SelectorConfig();
 		sc.MAX_READ_PER_PASS = Config.MMO_MAX_READ_PER_PASS;
 		sc.MAX_SEND_PER_PASS = Config.MMO_MAX_SEND_PER_PASS;
