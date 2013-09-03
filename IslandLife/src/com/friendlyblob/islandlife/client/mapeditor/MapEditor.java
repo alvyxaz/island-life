@@ -9,9 +9,11 @@ import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.helpers.Assets;
 
 public class MapEditor {
-	public static boolean enabled = true;
+	public static boolean enabled = false;
 	
 	public static int tileTextureSelected = 1; // Tile texture index
+	
+	static MapEditorWindow editorWindow;
 	
 	/*
 	 * Method that allows moving camera freely. Used when map editor is enabled
@@ -55,5 +57,14 @@ public class MapEditor {
 	 */
 	public static void toggle(){
 		enabled = !enabled;
+		
+		if (enabled) {
+			editorWindow = new MapEditorWindow();
+		} else {
+			if (editorWindow != null) {
+				editorWindow.setVisible(false);
+				editorWindow.dispose();
+			}
+		}
 	}
 }

@@ -18,7 +18,7 @@ public class Map {
 	private Texture texture;
 	private TextureRegion [] tileTextures;
 	
-	private int [][] tiles;
+	private static int [][] tiles;
 	
 	public static final int TILE_WIDTH = 96;
 	public static final int TILE_HEIGHT = 48;
@@ -127,6 +127,14 @@ public class Map {
 		
 		tiles = new int[100][50];
 
+	}
+	
+	public static void load(int[][] map) {
+		tiles = map;
+	}
+	
+	public static int[][] getTiles() {
+		return tiles;
 	}
 	
 	public static Map getInstance() {
