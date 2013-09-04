@@ -15,6 +15,25 @@ textures2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+gui/open
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+gui/save
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+textures3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 tiles/normal
   rotate: false
   xy: 2, 2

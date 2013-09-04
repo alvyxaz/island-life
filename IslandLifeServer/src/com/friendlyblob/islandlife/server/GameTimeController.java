@@ -2,12 +2,19 @@ package com.friendlyblob.islandlife.server;
 
 import java.util.Calendar;
 
+import com.friendlyblob.islandlife.server.model.actors.GameCharacter;
+
+import javolution.util.FastMap;
+
 public class GameTimeController extends Thread{
 	
 	public static final int TICKS_PER_SECOND = 10;
 	public static final int MILLIS_IN_TICK = 1000 / TICKS_PER_SECOND;
 	
 	private static GameTimeController instance;
+
+	// Collection of all characters that are moving this instance
+	private final FastMap<Integer, GameCharacter> movingObjects = new FastMap<Integer, GameCharacter>().shared();
 	
 	private final long referenceTime;
 	
@@ -33,14 +40,42 @@ public class GameTimeController extends Thread{
 		return (int) ((System.currentTimeMillis() - referenceTime) / MILLIS_IN_TICK);
 	}
 	
+	/**
+	 * Updates position of characters that are currently moving.
+	 */
+	public final void moveCharacters() {
+		GameCharacter character;
+		for (FastMap.Entry<Integer, GameCharacter> e = movingObjects.head(), 
+				tail = movingObjects.tail(); (e = e.getNext()) != tail;) {
+			character = e.getValue();
+			
+			if (character.updatePosition(getGameTicks())) {
+				// Destination reached
+				movingObjects.remove(e.getKey());
+			}
+		}
+	}
+	
+	/**
+	 * Registers characters that are moving 
+	 */
+	public final void registerMovingObject(GameCharacter object) {
+		if (object == null) {
+			return;
+		}
+		
+		movingObjects.putIfAbsent(object.getObjectId(), object);
+	}
+	
 	public final void run() {
 		long nextTickTime, sleepTime;
 		
 		while (true) {
 			nextTickTime = ((System.currentTimeMillis() / MILLIS_IN_TICK) * MILLIS_IN_TICK) + MILLIS_IN_TICK;
 			
-			// Most of the magic related to a tick happens here.
-
+			// Heavy stuff goes here
+			moveCharacters();
+			
 			sleepTime = nextTickTime - System.currentTimeMillis();
 			
 			// Sleeping until next tick
