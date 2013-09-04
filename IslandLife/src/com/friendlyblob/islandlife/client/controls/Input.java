@@ -160,7 +160,7 @@ public class Input {
 		keys[2] = new KeyboardKey(Keys.MINUS);
 		keys[3] = new KeyboardKey(Keys.G);
 		keys[4] = new KeyboardKey(Keys.C);
-		keys[5] = new KeyboardKey(Keys.F5);
+		keys[5] = new KeyboardKey(Keys.F2);
 	}
 	
 	

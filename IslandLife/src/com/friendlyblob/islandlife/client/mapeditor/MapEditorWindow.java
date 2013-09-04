@@ -90,6 +90,8 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Objects", null, panel, null);
 		
+		this.addWindowListener(this);
+		
 		setVisible(true);
 		pack();
 	}

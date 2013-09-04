@@ -12,6 +12,7 @@ import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.controls.Input;
 import com.friendlyblob.islandlife.client.helpers.Assets;
 import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
+import com.friendlyblob.islandlife.client.mapeditor.ObjectEditorWindow;
 
 public class Map {
 	
@@ -69,6 +70,8 @@ public class Map {
 		}
 	}
 	
+	ObjectEditorWindow objectEditor = null;
+	
 	public void update(float deltaTime) {
 		if (Gdx.input.isTouched()) {
 			updateTileTarget(); // Target is not MapEditor specific
@@ -77,6 +80,15 @@ public class Map {
 		// Toggle map editor with F1 key
 		if (Input.keyReleased(Keys.F1)){
 			MapEditor.toggle();
+		}
+		
+		// Toggle object editor 
+		if (Input.keyReleased(Keys.F2)) {
+			if (objectEditor == null) {
+				objectEditor = new ObjectEditorWindow();
+			}
+			
+			objectEditor.toggle();
 		}
 		
 		// Map editor related updates
