@@ -42,7 +42,7 @@ public class GameCharacter extends GameObject{
 		float angle = (float) Math.atan2(movement.destinationY - prevY, movement.destinationX - prevX);
 		
 		// TODO check if running or walking
-		int movementSpeed = getWalkingSpeed();
+		int movementSpeed = getMovementSpeed();
 		float distanceCovered = GameTimeController.DELTA_TIME*movementSpeed;
 		
 		getPosition().offset((float) Math.cos(angle) * distanceCovered, 
@@ -60,6 +60,18 @@ public class GameCharacter extends GameObject{
 		return false;
 	}
 	
+	/**
+	 * Registers a new movement destination in <b>movement</b> variable
+	 * Called only once when user requests to move a character.
+	 * 
+	 * Actions:
+	 * 	Checking for collisions
+	 * 	If character is about to collide with something, move it to collision point
+	 * 
+	 * @param x requested destination x
+	 * @param y requested destination y
+	 * @return true if movement is initialized, false if impossible to move
+	 */
 	public boolean moveCharacterTo(int x, int y) {
 		// TODO check boundaries and collisions. If out of bounds - return false
 		
@@ -83,11 +95,20 @@ public class GameCharacter extends GameObject{
 		public int timeStamp;
 	}
 	
+	public MovementData getMovement() {
+		return movement;
+	}
+	
 	public BaseStats getBaseStats() {
 		return baseStats;
 	}
 	
-	public int getWalkingSpeed() {
+	public int getMovementSpeed() {
+		// TODO Check whether running or walking, and return what's necessary
+		return getWalkingSpeed();
+	}
+	
+	private int getWalkingSpeed() {
 		return stats.getWalkingSpeed();
 	}
 	

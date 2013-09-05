@@ -10,7 +10,7 @@ public class LoginSuccessful extends ServerPacket {
 	
 	@Override
 	protected void write() {
-		writeC(0x03);
+		writeC(0x02);
 	}
 
 }

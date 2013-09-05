@@ -56,13 +56,17 @@ public class GameScreen extends BaseScreen{
 	 */
 	public void updateGameplayInput() {
 		if (Input.isReleasing()) {
-			world.getPlayer().moveTo(world.toWorldX(Input.getX()), world.toWorldY(Input.getY()));
+			world.getPlayer().requestMovementDestination(world.toWorldX(Input.getX()), world.toWorldY(Input.getY()));
 		}
 	}
 
 	@Override
 	public void prepare() {
 		// TODO Auto-generated method stub
+	}
+	
+	public GameWorld getWorld() {
+		return world;
 	}
 
 }

@@ -4,19 +4,33 @@ import java.nio.ByteBuffer;
 
 import org.mmocore.network.NioNetStringBuffer;
 
+import com.friendlyblob.islandlife.client.entities.Player;
 import com.friendlyblob.islandlife.client.network.Connection;
 
 public abstract class ReceivablePacket extends AbstractPacket implements Runnable{
 	public NioNetStringBuffer stringBuffer;
 	
 	protected Connection connection;
+	protected Player player;
 	
 	protected ReceivablePacket() {
 		
 	}
 	
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+	
+	public Player getPlayer() {
+		return player;
+	}
+	
 	public void setConnection(Connection connection){
 		this.connection = connection;
+	}
+	
+	public Connection getConnection() {
+		return connection;
 	}
 	
 	public abstract boolean read();

@@ -1,6 +1,8 @@
 package com.friendlyblob.islandlife.server.network.packets.client;
 
+import com.friendlyblob.islandlife.server.model.actors.Player;
 import com.friendlyblob.islandlife.server.network.packets.ClientPacket;
+import com.friendlyblob.islandlife.server.network.packets.server.MoveResponse;
 
 public class RequestMove extends ClientPacket{
 
@@ -16,9 +18,16 @@ public class RequestMove extends ClientPacket{
 
 	@Override
 	public void run() {
-		// If failed to move
 		if(getClient().getPlayer().moveCharacterTo(x, y)) {
-			// TODO Send a packet of successful action
+			Player player = getClient().getPlayer();
+			
+			// TODO Have in mind that player might change speed while moving
+			
+			// Sending a movement response to player
+			getClient().sendPacket(new MoveResponse((int)player.getMovement().destinationX,
+					(int) player.getMovement().destinationY, 
+					player.getMovementSpeed()));
+			
 		} else {
 			// TODO Send a packet of failed action
 		}

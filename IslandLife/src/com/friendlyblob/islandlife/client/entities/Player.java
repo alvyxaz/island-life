@@ -12,7 +12,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.helpers.Assets;
+import com.friendlyblob.islandlife.client.network.packets.client.RequestMove;
 
 public class Player extends MovableObject{
 
@@ -34,6 +36,9 @@ public class Player extends MovableObject{
 		spriteBatch.setColor(Color.WHITE);
 	}
 	
-	
+	public void requestMovementDestination(int x, int y) {
+		// TODO Wait for response before moving
+		MyGame.connection.sendPacket(new RequestMove(x, y));
+	}
 	
 }

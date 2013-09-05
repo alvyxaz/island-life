@@ -59,7 +59,7 @@ public class LoginPacket extends GameClientPacket{
 			
 			 while (rset.next()) {
 				 if (rset.getInt(1) > 0) {
-					 getClient().setState(GameClient.GameClientState.AUTHORIZED);
+					 getClient().setState(GameClient.GameClientState.IN_GAME);
 					 // TODO fetch player data from database and attach Player object to connection
 					 getClient().setPlayer(new Player());
 					 break;

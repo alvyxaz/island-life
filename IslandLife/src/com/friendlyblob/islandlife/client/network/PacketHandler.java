@@ -13,11 +13,17 @@ public class PacketHandler {
 		ReceivablePacket response = null;
 		
 		switch(opcode){
-			case 0x02:
+			case 0x01:
 				response = new KeyPacket();
 				break;
-			case 0x03:
+			case 0x02:
 				response = new LoginSuccessful();
+				break;
+			case 0x03:
+				response = new MoveResponse();
+				break;
+			default:
+				response = new UnknownPacket();
 				break;
 		}
 		

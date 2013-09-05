@@ -11,7 +11,7 @@ public class MovableObject {
 	private int targetX;
 	private int targetY;
 	
-	private int speed = 200; // Pixels per second
+	private int movementSpeed = 0; // Pixels per second
 	
 	// States
 	private int state = 0;
@@ -30,24 +30,25 @@ public class MovableObject {
 			float angle = (float)Math.atan2(targetY - hitBox.y, targetX - hitBox.x);
 			
 			// Moving 
-			hitBox.x += Math.cos(angle) * speed * deltaTime;
-			hitBox.y += Math.sin(angle) * speed * deltaTime;
+			hitBox.x += Math.cos(angle) * movementSpeed * deltaTime;
+			hitBox.y += Math.sin(angle) * movementSpeed * deltaTime;
 			
 			// Checking whether object has arrived
-			if (Math.abs(targetX - hitBox.x) < speed * deltaTime && Math.abs(targetY - hitBox.y) < speed * deltaTime) {
+			if (Math.abs(targetX - hitBox.x) < movementSpeed * deltaTime && Math.abs(targetY - hitBox.y) < movementSpeed * deltaTime) {
 				state = IDLE;
 			}
-			
 			break;
 		}
 	}
 	
 	public void moveTo (int x, int y) {
-		// TODO Wait for response before moving
-		MyGame.connection.sendPacket(new RequestMove(x, y));
-		
 		this.targetX = x - (int) hitBox.width/2;
 		this.targetY = y;
 		state = MOVING;
+	}
+	
+	public void moveTo (int x, int y, int speed) {
+		this.movementSpeed = speed;
+		moveTo(x, y);
 	}
 }

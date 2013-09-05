@@ -12,7 +12,7 @@ public class KeyPacket extends ServerPacket {
 	
 	@Override
 	protected void write() {
-		writeC(0x02);
+		writeC(0x01);
 		for(int i = 0; i < 8; i++){
 			writeC(key[i]);
 		}

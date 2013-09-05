@@ -18,6 +18,7 @@ import javolution.util.FastList;
 import org.mmocore.network.NioNetStackList;
 import org.mmocore.network.NioNetStringBuffer;
 
+import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.network.packets.ReceivablePacket;
 import com.friendlyblob.islandlife.client.network.packets.SendablePacket;
 
@@ -67,6 +68,8 @@ public class Connection extends Thread {
 	private final InputStream inputStream;
 	
 	public Thread readerThread;
+	
+	public MyGame game;
 	
 	public Connection(final PacketHandler packetHandler, String host, int port) throws IOException{
 		super.setName("PacketHandlerThread-" + super.getId());

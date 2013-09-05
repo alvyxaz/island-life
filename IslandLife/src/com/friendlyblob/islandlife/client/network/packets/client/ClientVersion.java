@@ -2,11 +2,11 @@ package com.friendlyblob.islandlife.client.network.packets.client;
 
 import com.friendlyblob.islandlife.client.network.packets.SendablePacket;
 
-public class Version extends SendablePacket {
+public class ClientVersion extends SendablePacket {
 
 	private int version;
 	
-	public Version(int version) {
+	public ClientVersion(int version) {
 		this.version = version;
 	}
 	
