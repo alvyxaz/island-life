@@ -48,33 +48,6 @@ public class ObjectEditorPanel extends JPanel implements MouseListener, MouseMot
 		addMouseListener(this);
 		addMouseMotionListener(this);
 	}
-	
-	public void save(XmlReader.Element xml) {
-
-		if (parent.setCenterPoint.getModel().isSelected()) {
-			String centerPoint = (String) parent.table.getModel().getValueAt(parent.selectedObjectId, 5);
-			xml.setAttribute("centerpoint", centerPoint);
-		} else if (parent.setCollision.getModel().isSelected()) {
-			if (points.size() < 4) {
-				JOptionPane.showMessageDialog(this, "You need to select 4 points for a collision.");
-				return;
-			}
-					
-			String collisions = (String) parent.table.getModel().getValueAt(parent.selectedObjectId, 2);
-			xml.setAttribute("collision", collisions);
-		}
-		
-		PrintWriter out;
-		try {
-			out = new PrintWriter("data/objects.xml");
-			out.write(parent.getXmlRoot().toString());
-			out.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -115,11 +88,14 @@ public class ObjectEditorPanel extends JPanel implements MouseListener, MouseMot
 	}
 	
 	
-	public void loadObject(XmlReader.Element object) {
+	public void loadObject(int selectedRow) {
 		try {
-			activeTexture = ImageIO.read(new File(object.getAttribute("texture").toString()));
+			String tmpTexture = (String) parent.getTable().getModel().getValueAt(selectedRow, 6);
+			if (tmpTexture != null) {
+				activeTexture = ImageIO.read(new File(tmpTexture));
+			}
 			
-			String tmp = object.getAttribute("centerpoint").toString();
+			String tmp = (String) parent.getTable().getModel().getValueAt(selectedRow, 5);
 			if (tmp != null) {
 				if (tmp.matches("\\d+:\\d+")) {
 					String[] parts = tmp.split(":");
@@ -128,8 +104,8 @@ public class ObjectEditorPanel extends JPanel implements MouseListener, MouseMot
 				}
 			}
 			
-			String collision = object.getAttribute("collision").toString();
-			if (collision != null) {
+			String collision = (String) parent.getTable().getModel().getValueAt(selectedRow,2);
+			if (collision != null && centerPoint != null) {
 				if (collision.matches("(-?\\d+:-?\\d+;){3}-?\\d+:-?\\d+")) {
 					String[] spoints = collision.split(";");
 					
@@ -150,7 +126,22 @@ public class ObjectEditorPanel extends JPanel implements MouseListener, MouseMot
 		}
 		repaint();
 	}
+	
+	public void setActiveTexture(String imgPath) {
+		try {
+			activeTexture = ImageIO.read(new File(imgPath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		repaint();
+	}
 
+	public Image getActiveTexture() {
+		return activeTexture;
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {	
 		if (parent.setCollision.getModel().isSelected()) {
@@ -203,13 +194,13 @@ public class ObjectEditorPanel extends JPanel implements MouseListener, MouseMot
 				}
 			}
 			
-			parent.table.getModel().setValueAt(sb.toString(), parent.selectedObjectId, 2);
+			parent.table.getModel().setValueAt(sb.toString(), parent.getTable().getSelectedRow(), 2);
 		} else if (parent.setCenterPoint.getModel().isSelected()) {
 			if (centerPoint != null) {
-				int textureHeight = Integer.parseInt((String) parent.table.getModel().getValueAt(parent.selectedObjectId, 4));
+				int textureHeight = activeTexture.getHeight(null);
 				
 				// Invert y because of different coordinates in libgdx
-				parent.table.getModel().setValueAt(centerPoint.x + ":" + (textureHeight - centerPoint.y), parent.selectedObjectId, 5);
+				parent.table.getModel().setValueAt(centerPoint.x + ":" + (textureHeight - centerPoint.y), parent.getTable().getSelectedRow(), 5);
 			}
 		}
 	}

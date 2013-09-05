@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
@@ -31,6 +32,8 @@ import sun.org.mozilla.javascript.internal.ast.ForInLoop;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlWriter;
+
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
 
@@ -96,6 +99,7 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 		open = new JButton(new ImageIcon("textures/gui/open.png"));
 		toolBar.add(open);
 		save = new JButton(new ImageIcon("textures/gui/save.png"));
+		save.setToolTipText("Save selected row to file");
 		toolBar.add(save);
 		
 		setCollision = new JToggleButton("Set Collision");
@@ -127,8 +131,10 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 		
 		addRow = new JButton(new ImageIcon("textures/gui/add.png"));
 		toolBar_1.add(addRow);
+		addRow.setToolTipText("Add new row");
 		removeRow = new JButton(new ImageIcon("textures/gui/remove.png"));
 		toolBar_1.add(removeRow);
+		removeRow.setToolTipText("Remove selected row(s)");
 		
 		DefaultTableModel dtm = new DefaultTableModel();
 		dtm.setDataVector(data, columnNames);
@@ -199,8 +205,8 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 	private XmlReader.Element objects = null;
 	private XmlReader.Element root = null;
 	
-	public XmlReader.Element getXmlRoot() {
-		return root;
+	public JTable getTable() {
+		return table;
 	}
 	
 	/**
@@ -210,6 +216,7 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
+		// Read from xml to table
 		if (source == open) {
 		      XmlReader xmlReader = new XmlReader();
 		      root = null;
@@ -229,23 +236,40 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 			  for (int i = 0; i < childCount; i++) {
 				tmp = objects.getChild(i);
 				  
-				data[i] = new Object[] { i, tmp.getAttribute("title"), tmp.getAttribute("collision"), tmp.getAttribute("width"), tmp.getAttribute("height"), tmp.getAttribute("centerpoint"), tmp.getAttribute("texture")};
+				data[i] = new Object[] { tmp.getAttribute("id"), tmp.getAttribute("title"), tmp.getAttribute("collision"), tmp.getAttribute("width"), tmp.getAttribute("height"), tmp.getAttribute("centerpoint"), tmp.getAttribute("texture")};
 			  }
 			  
 			  table.setModel(new DefaultTableModel(data, columnNames));
+		
+		// save to xml from table
 		} else if (source == save) {
 			TableModel tm =  table.getModel();
-			XmlReader.Element selectedElement = objects.getChild(selectedObjectId);
-			for (int i = 0; i < tm.getColumnCount(); i++) {
-				selectedElement.setAttribute(columnNames[i], tm.getValueAt(selectedObjectId, i).toString());
-			}
 			
-			PrintWriter out;
-			try {
+			StringWriter sw = new StringWriter();
+			 XmlWriter xmlWriter = new XmlWriter(sw);
+			 try {
+				 xmlWriter.element("xml")
+				        .attribute("version", "1.0")
+				        .attribute("encoding", "UTF-8")
+	       			.element("objects");
+			
+				for (int i = 0; i < tm.getRowCount(); i++) {
+					xmlWriter.element("object");
+					for (int j = 0; j < tm.getColumnCount(); j++) {
+						xmlWriter.attribute(columnNames[j], tm.getValueAt(i, j).toString());
+					}
+					xmlWriter.pop();
+				}
+	
+				xmlWriter.pop().pop();
+				xmlWriter.close();
+				
+				// Save table data to file
+				PrintWriter out;
 				out = new PrintWriter("data/objects.xml");
-				out.write(root.toString());
+				out.write(sw.toString());
 				out.close();
-			} catch (FileNotFoundException e1) {
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
@@ -261,7 +285,14 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 		    	String[] parts = chooser.getSelectedFile().getAbsolutePath().split("textures");
 		    	
 		    	String imgPath = ".\\textures" + parts[1];
-		    	table.getModel().setValueAt(imgPath, selectedObjectId, 6);
+		    	
+		    	DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+		    	dtm.setValueAt(imgPath, getTable().getSelectedRow(), 6);
+		    	
+			    oep.setActiveTexture(imgPath);
+			    
+		    	dtm.setValueAt(oep.getActiveTexture().getWidth(null), getTable().getSelectedRow(), 3);
+		    	dtm.setValueAt(oep.getActiveTexture().getHeight(null), getTable().getSelectedRow(), 4);
 		    }
 		} else if (source == addRow) {
 			((DefaultTableModel) table.getModel()).addRow(new Object[] { "", "", "", "", "", ""});
@@ -283,18 +314,12 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 		enabled = !enabled;
 		setVisible(enabled);
 	}
-
-	public int selectedObjectId;
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 1) {
 			if (table.getSelectedRow() != -1) {
-				String id = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
-				if (id != "") {
-					selectedObjectId = Integer.parseInt(id);
-					oep.loadObject(objects.getChild(selectedObjectId));
-				}
+				oep.loadObject(table.getSelectedRow());
 			}
 		}
 	}
