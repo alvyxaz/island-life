@@ -130,14 +130,14 @@ public class ObjectEditorPanel extends JPanel implements MouseListener, MouseMot
 			
 			String collision = object.getAttribute("collision").toString();
 			if (collision != null) {
-				if (collision.matches("(\\d+:\\d+;){3}\\d+:\\d+")) {
+				if (collision.matches("(-?\\d+:-?\\d+;){3}-?\\d+:-?\\d+")) {
 					String[] spoints = collision.split(";");
 					
 					points.clear();
 					for (String p : spoints) {
 						String[] parts = p.split(":");
 						
-						Point pt = new Point(centerPoint.x + new Integer(parts[0]), new Integer(parts[1]) - centerPoint.y); 
+						Point pt = new Point(centerPoint.x + new Integer(parts[0]), centerPoint.y - new Integer(parts[1])); 
 						points.add(pt);
 						System.out.println("center point: " + centerPoint.x + " " + centerPoint.y);
 						System.out.println("parts: " + parts[0] + " " + parts[1]);
@@ -184,7 +184,7 @@ public class ObjectEditorPanel extends JPanel implements MouseListener, MouseMot
 	public void mousePressed(MouseEvent e) {
 		
 	}
-
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// Update table
