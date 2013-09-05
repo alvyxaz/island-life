@@ -4,23 +4,23 @@ package com.friendlyblob.islandlife.server.utils;
  * Represent object's current position
  */
 public class ObjectPosition {
-	private int x;
-	private int y;
+	private float x;
+	private float y;
 	
 	public ObjectPosition() {
 		x = 0;
 		y = 0;
 	}
 	
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 	
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 	
-	public void setX(int x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 	
@@ -28,12 +28,12 @@ public class ObjectPosition {
 		this.y = y;
 	}
 	
-	public void set(int x, int y) {
+	public void set(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 	
-	public void offset(int dX, int dY) {
+	public void offset(float dX, float dY) {
 		this.x += dX;
 		this.y += dY;
 	}

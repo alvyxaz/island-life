@@ -10,6 +10,7 @@ public class GameTimeController extends Thread{
 	
 	public static final int TICKS_PER_SECOND = 10;
 	public static final int MILLIS_IN_TICK = 1000 / TICKS_PER_SECOND;
+	public static final float DELTA_TIME = MILLIS_IN_TICK/1000.0f;
 	
 	private static GameTimeController instance;
 
@@ -91,6 +92,10 @@ public class GameTimeController extends Thread{
 	
 	public final void stopTimer() {
 		super.interrupt();
+	}
+	
+	public static GameTimeController getInstance() {
+		return instance;
 	}
 	
 }

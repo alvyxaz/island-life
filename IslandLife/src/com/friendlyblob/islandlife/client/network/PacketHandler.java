@@ -16,6 +16,9 @@ public class PacketHandler {
 			case 0x02:
 				response = new KeyPacket();
 				break;
+			case 0x03:
+				response = new LoginSuccessful();
+				break;
 		}
 		
 		

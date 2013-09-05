@@ -1,6 +1,8 @@
 package com.friendlyblob.islandlife.client.entities;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.friendlyblob.islandlife.client.MyGame;
+import com.friendlyblob.islandlife.client.network.packets.client.RequestMove;
 
 public class MovableObject {
 
@@ -41,6 +43,9 @@ public class MovableObject {
 	}
 	
 	public void moveTo (int x, int y) {
+		// TODO Wait for response before moving
+		MyGame.connection.sendPacket(new RequestMove(x, y));
+		
 		this.targetX = x - (int) hitBox.width/2;
 		this.targetY = y;
 		state = MOVING;

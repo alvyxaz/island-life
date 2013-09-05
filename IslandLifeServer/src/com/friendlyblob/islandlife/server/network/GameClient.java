@@ -15,6 +15,7 @@ import org.mmocore.network.MMOConnection;
 import org.mmocore.network.ReceivablePacket;
 
 import com.friendlyblob.islandlife.server.Config;
+import com.friendlyblob.islandlife.server.model.actors.Player;
 import com.friendlyblob.islandlife.server.network.packets.ServerClose;
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
 import com.friendlyblob.islandlife.server.network.packets.server.ActionFailed;
@@ -45,9 +46,11 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 	
 	private final GameCrypt crypt;
 	
+	private Player player;
+	
 	public GameClient(MMOConnection<GameClient> con) {
 		super(con);
-
+		
 		stats = new ClientStats(); 
 		packetQueue = new ArrayBlockingQueue<>(Config.CLIENT_PACKET_QUEUE_SIZE);
 		crypt = new GameCrypt();
@@ -59,6 +62,14 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 		}
 
 		state = GameClientState.CONNECTED;
+	}
+	
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 	
 	public byte[] enableCrypt()
@@ -121,7 +132,7 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 		if (!queueLock.tryLock()) {
 			return;
 		}
-		
+
 		try {
 			int count = 0;
 			ReceivablePacket<GameClient> packet;
@@ -131,7 +142,7 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 				if (packet == null) {
 					return;
 				}
-				
+
 				try {
 					packet.run();
 				} catch (Exception e) {

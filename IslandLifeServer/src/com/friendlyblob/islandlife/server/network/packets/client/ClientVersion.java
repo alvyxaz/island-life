@@ -16,7 +16,6 @@ public class ClientVersion extends GameClientPacket{
 	@Override
 	public void run() {
 		// TODO Check if version is correct
-		System.out.println("RUNNING VERSION PACKET");
 		sendPacket(new KeyPacket(getClient().enableCrypt()));
 	}
 

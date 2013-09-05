@@ -10,7 +10,6 @@ import com.friendlyblob.islandlife.client.network.packets.client.Version;
 
 public class DesktopGame {
 	public static void main (String[] args) {
-		
 		// TODO: Remove tools dependency
 		Settings settings = new Settings();
 		TexturePacker2.process(settings, "textures", "../IslandLifeAndroid/assets/textures", "textures");
@@ -20,9 +19,9 @@ public class DesktopGame {
 		game.ads = new AdsDesktop();
 		
 		try {
-//			Connection connection = new Connection(new PacketHandler(), "localhost", 7777);
-//			connection.start();
-//			connection.sendPacket(new Version(5));
+			MyGame.connection = new Connection(new PacketHandler(), "localhost", 7777);
+			MyGame.connection.start();
+			MyGame.connection.sendPacket(new Version(5));
 		} catch (Exception e){
 			System.out.println();
 		}

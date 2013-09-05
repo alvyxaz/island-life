@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.friendlyblob.islandlife.client.controls.Input;
 import com.friendlyblob.islandlife.client.helpers.Achievements;
 import com.friendlyblob.islandlife.client.helpers.Assets;
+import com.friendlyblob.islandlife.client.network.Connection;
 import com.friendlyblob.islandlife.client.screens.GameScreen;
 import com.friendlyblob.islandlife.client.screens.LoadingScreen;
 
@@ -23,9 +24,6 @@ public class MyGame extends Game implements ApplicationListener {
 	public static Rectangle SCREEN_RECTANGLE;
 	public static boolean isAndroid;
 	public static Random random;
-	
-	public static float BOX_TO_WORLD = 100f;
-	public static float WORLD_TO_BOX = 0.01f;
 	
 	public static Preferences preferences;
 	
@@ -39,6 +37,8 @@ public class MyGame extends Game implements ApplicationListener {
 	// Screens
 	public LoadingScreen screenLoading;
 	public GameScreen screenGame;
+	
+	public static Connection connection;
 	
 	public MyGame(GoogleInterface google, ActionResolver actionResolver){
 		this.google = google;

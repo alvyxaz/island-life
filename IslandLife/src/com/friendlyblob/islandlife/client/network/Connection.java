@@ -66,6 +66,8 @@ public class Connection extends Thread {
 	private final OutputStream outputStream;
 	private final InputStream inputStream;
 	
+	public Thread readerThread;
+	
 	public Connection(final PacketHandler packetHandler, String host, int port) throws IOException{
 		super.setName("PacketHandlerThread-" + super.getId());
 
@@ -123,16 +125,27 @@ public class Connection extends Thread {
 		return amountRead;
 	}
 	
-	
 	public boolean kazkas = false;
 	
 	@Override
 	public void run() {
+		// TODO Cleanup reading thread, no infinite loop
+		readerThread = new Thread() {
+			public void run() {
+				while(!shutdown){
+					readPacket();
+				}
+			}
+		};
+		readerThread.start();
+		
 		while(!shutdown){
-			if(!sendQueue.isEmpty()){
-				writePacket();
-				readPacket();
-			} 
+			synchronized (getSendQueue()) {
+				if(!sendQueue.isEmpty()){
+					writePacket();
+				}
+			}
+			
 		}
 	}
 	
@@ -358,7 +371,9 @@ public class Connection extends Thread {
 	
 	
 	protected void onForcedDisconnection() {
-		System.out.println("Forced to disconnect :(");
+		// TODO add more appropriate methods of notification and etc
+		System.out.println("Connection with server lost");
+		shutdown = true;
 	}
 	
 	private final boolean prepareWriteBuffer() {
