@@ -15,16 +15,30 @@ textures2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-gui/open
+gui/add
   rotate: false
   xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+gui/open
+  rotate: false
+  xy: 2, 20
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
+gui/remove
+  rotate: false
+  xy: 70, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 gui/save
   rotate: false
-  xy: 36, 2
+  xy: 36, 20
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

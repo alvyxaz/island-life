@@ -50,6 +50,9 @@ public class GameTimeController extends Thread{
 				tail = movingObjects.tail(); (e = e.getNext()) != tail;) {
 			character = e.getValue();
 			
+			// Update character region if necessary
+			character.getZone().updateRegion(character);
+			
 			if (character.updatePosition(getGameTicks())) {
 				// Destination reached
 				movingObjects.remove(e.getKey());

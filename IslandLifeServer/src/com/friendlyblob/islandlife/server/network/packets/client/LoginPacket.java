@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.friendlyblob.islandlife.server.DatabaseFactory;
+import com.friendlyblob.islandlife.server.model.World;
 import com.friendlyblob.islandlife.server.model.actors.Player;
 import com.friendlyblob.islandlife.server.network.GameClient;
 import com.friendlyblob.islandlife.server.network.GameClientPacket;
@@ -61,7 +62,10 @@ public class LoginPacket extends GameClientPacket{
 				 if (rset.getInt(1) > 0) {
 					 getClient().setState(GameClient.GameClientState.IN_GAME);
 					 // TODO fetch player data from database and attach Player object to connection
-					 getClient().setPlayer(new Player());
+					 Player player = new Player();
+					 getClient().setPlayer(player);
+					 player.setClient(getClient());
+					 World.getInstance().addPlayer(player);
 					 break;
 				 }
 			 }

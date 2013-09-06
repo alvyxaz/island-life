@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.mmocore.network.SelectorConfig;
 import org.mmocore.network.SelectorThread;
 
+import com.friendlyblob.islandlife.server.model.World;
 import com.friendlyblob.islandlife.server.network.GameClient;
 import com.friendlyblob.islandlife.server.network.GamePacketHandler;
 import com.friendlyblob.islandlife.server.network.ThreadPoolManager;
@@ -43,6 +44,7 @@ public class GameServer{
     	
     	GameTimeController.initialize();
     	
+    	World.getInstance();
     	
     	// Shutdown hook
     	Runtime.getRuntime().addShutdownHook(Shutdown.getInstance());

@@ -5,6 +5,9 @@ import com.friendlyblob.islandlife.server.model.GameObject;
 import com.friendlyblob.islandlife.server.model.stats.BaseStats;
 import com.friendlyblob.islandlife.server.model.stats.CharacterStats;
 import com.friendlyblob.islandlife.server.model.stats.StatsSet;
+import com.friendlyblob.islandlife.server.network.GameClient;
+import com.friendlyblob.islandlife.server.network.packets.ClientPacket;
+import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
 import com.friendlyblob.islandlife.server.utils.ObjectPosition;
 
 /*
@@ -16,6 +19,8 @@ public class GameCharacter extends GameObject{
 	private CharacterStats stats;
 	
 	private MovementData movement;
+	
+	private GameClient client = null;
 	
 	public GameCharacter() {
 		// Initialize base stats
@@ -110,6 +115,18 @@ public class GameCharacter extends GameObject{
 	
 	private int getWalkingSpeed() {
 		return stats.getWalkingSpeed();
+	}
+	
+	public void setClient(GameClient client) {
+		this.client = client;
+	}
+	
+	public GameClient getClient() {
+		return client;
+	}
+	
+	public void sendPacket(ServerPacket packet) {
+		
 	}
 	
 }
