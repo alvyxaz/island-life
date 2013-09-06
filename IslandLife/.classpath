@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="libs/gdx-tools.jar"/>
 	<classpathentry kind="lib" path="libs/mmocore.jar" sourcepath="/MMOCore"/>
 	<classpathentry kind="lib" path="libs/javolution-5.5.1.jar"/>
+	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

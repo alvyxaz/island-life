@@ -34,11 +34,33 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlWriter;
 import com.friendlyblob.islandlife.client.gameworld.Map;
+import java.awt.Panel;
+import java.awt.List;
+import java.awt.FlowLayout;
+import javax.swing.JList;
+import javax.swing.JLabel;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.factories.FormFactory;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 public class MapEditorWindow extends JFrame implements WindowListener, ActionListener {
 
 	private JButton open;
 	private JButton save;
+	
+	private Object[] zones = {};
+	private JButton loadZones;
+	private JButton addNewZone;
+	private JButton removeZones;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textField_4;
+	private JTextField textField_5;
 	
 	/**
 	 * Create the frame.
@@ -90,7 +112,107 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Objects", null, panel, null);
 		
+		JPanel zonesPanel = new JPanel();
+		tabbedPane.addTab("Zones", null, zonesPanel, null);
+		zonesPanel.setLayout(null);
+		
+				
+		JPanel panel_2 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		panel_2.setBounds(0, 0, 100, 300);
+		zonesPanel.add(panel_2);
+		
+		JToolBar toolBar_1 = new JToolBar();
+		toolBar_1.setFloatable(false);
+		panel_2.add(toolBar_1);
+		
+		loadZones = new JButton(new ImageIcon("textures/gui/load.png"));
+		loadZones.setToolTipText("Load zones");
+		toolBar_1.add(loadZones);
+		
+		addNewZone = new JButton(new ImageIcon("textures/gui/add.png"));
+		addNewZone.setToolTipText("Add new zone");
+		toolBar_1.add(addNewZone);
+		
+		removeZones = new JButton(new ImageIcon("textures/gui/remove.png"));
+		removeZones.setToolTipText("Remove selected zone(s)");
+		toolBar_1.add(removeZones);
+		
+		JList list = new JList(zones);
+		list.setPreferredSize(new Dimension(100, 250));
+		panel_2.add(list);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(null, "Zone", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setSize(371, 300);
+		panel_1.setLocation(100, 0);
+		zonesPanel.add(panel_1);
+		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("default:grow"),},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,}));
+		
+		JLabel lblNewLabel = new JLabel("id");
+		panel_1.add(lblNewLabel, "2, 2, right, default");
+		
+		textField = new JTextField();
+		panel_1.add(textField, "4, 2, left, default");
+		textField.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("title");
+		panel_1.add(lblNewLabel_1, "2, 4, right, default");
+		
+		textField_1 = new JTextField();
+		panel_1.add(textField_1, "4, 4, left, default");
+		textField_1.setColumns(10);
+		
+		JLabel lblNewLabel_2 = new JLabel("regionsX");
+		panel_1.add(lblNewLabel_2, "2, 6, right, default");
+		
+		textField_2 = new JTextField();
+		panel_1.add(textField_2, "4, 6, left, default");
+		textField_2.setColumns(10);
+		
+		JLabel lblNewLabel_3 = new JLabel("regionsY");
+		panel_1.add(lblNewLabel_3, "2, 8, right, default");
+		
+		textField_3 = new JTextField();
+		panel_1.add(textField_3, "4, 8, left, default");
+		textField_3.setColumns(10);
+		
+		JLabel lblNewLabel_4 = new JLabel("regionWidth");
+		panel_1.add(lblNewLabel_4, "2, 10, right, default");
+		
+		textField_4 = new JTextField();
+		panel_1.add(textField_4, "4, 10, left, default");
+		textField_4.setColumns(10);
+		
+		JLabel lblNewLabel_5 = new JLabel("regionHeight");
+		panel_1.add(lblNewLabel_5, "2, 12, right, default");
+		
+		textField_5 = new JTextField();
+		panel_1.add(textField_5, "4, 12, left, default");
+		textField_5.setColumns(10);
+		
 		this.addWindowListener(this);
+		loadZones.addActionListener(this);
+		addNewZone.addActionListener(this);
+		removeZones.addActionListener(this);
 		
 		setVisible(true);
 		pack();
@@ -240,6 +362,12 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 				e1.printStackTrace();
 			}
 			 
+		} else if (source == loadZones) {
+			
+		} else if (source == addNewZone) {
+			
+		} else if (source == removeZones) {
+			
 		}
 		
 		

@@ -99,7 +99,6 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 		open = new JButton(new ImageIcon("textures/gui/open.png"));
 		toolBar.add(open);
 		save = new JButton(new ImageIcon("textures/gui/save.png"));
-		save.setToolTipText("Save selected row to file");
 		toolBar.add(save);
 		
 		setCollision = new JToggleButton("Set Collision");
