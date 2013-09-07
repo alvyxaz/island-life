@@ -1,11 +1,10 @@
 package com.friendlyblob.islandlife.client.mapeditor;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -13,59 +12,56 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Iterator;
+import java.util.Arrays;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.JButton;
-
-import sun.org.mozilla.javascript.internal.ast.ForInLoop;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlWriter;
 import com.friendlyblob.islandlife.client.gameworld.Map;
-import java.awt.Panel;
-import java.awt.List;
-import java.awt.FlowLayout;
-import javax.swing.JList;
-import javax.swing.JLabel;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
-public class MapEditorWindow extends JFrame implements WindowListener, ActionListener {
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.BoxLayout;
+import java.awt.Component;
 
-	private JButton open;
-	private JButton save;
+public class MapEditorWindow extends JFrame implements WindowListener, ActionListener, MouseListener {
+
 	
 	private Object[] zones = {};
 	private JButton loadZones;
+	private JButton saveZone;
 	private JButton addNewZone;
 	private JButton removeZones;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
+	private JTable table;
+
+	private Object[] columnNames = {"id", "title", "regionsX", "regionsY", "regionWidth", "regionHeight"};
+
 	
 	/**
 	 * Create the frame.
 	 */
 	public MapEditorWindow() {
+		setResizable(false);
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -85,137 +81,64 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 		
 
 		TilePanel tp = new TilePanel();
-		
-		getContentPane().setLayout(null);
 		getContentPane().setPreferredSize(tp.getPreferredSize());
-		
-		JToolBar toolBar = new JToolBar();
-		toolBar.setFloatable(false);
-		toolBar.setBounds(0, 0, 500, 50);
-		getContentPane().add(toolBar);
-		
-		open = new JButton(new ImageIcon("textures/gui/open.png"));
-		toolBar.add(open);
-		
-		save = new JButton(new ImageIcon("textures/gui/save.png"));
-		toolBar.add(save);
-		
-		open.addActionListener(this);
-		save.addActionListener(this);
+		getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.setBounds(0, 50, 500, 500);
 		getContentPane().add(tabbedPane);
+		
+		JPanel zonesPanel = new JPanel();
+		tabbedPane.addTab("Zones", null, zonesPanel, null);
+		zonesPanel.setLayout(new BoxLayout(zonesPanel, BoxLayout.Y_AXIS));
+		
+		JToolBar toolBar_1 = new JToolBar();
+		toolBar_1.setAlignmentX(Component.LEFT_ALIGNMENT);
+		zonesPanel.add(toolBar_1);
+		toolBar_1.setFloatable(false);
+		
+		loadZones = new JButton(new ImageIcon("textures/gui/load.png"));
+		loadZones.setToolTipText("Load zones");
+		toolBar_1.add(loadZones);
+		
+		saveZone = new JButton(new ImageIcon("textures/gui/save.png"));
+		saveZone.setToolTipText("Save selected zone");
+		toolBar_1.add(saveZone);
+		toolBar_1.addSeparator();
+		
+		saveZone.addActionListener(this);
+		
+		addNewZone = new JButton(new ImageIcon("textures/gui/add.png"));
+		addNewZone.setToolTipText("Add a new zone");
+		toolBar_1.add(addNewZone);
+		
+		removeZones = new JButton(new ImageIcon("textures/gui/remove.png"));
+		removeZones.setToolTipText("Remove selected zone(s)");
+		toolBar_1.add(removeZones);
+		removeZones.addActionListener(this);
+		loadZones.addActionListener(this);
+		addNewZone.addActionListener(this);
+		table = new JTable();
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.addMouseListener(this);
+		
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		zonesPanel.add(scrollPane);
 		
 		tabbedPane.addTab("Tiles", null, tp, null);
 		
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Objects", null, panel, null);
 		
-		JPanel zonesPanel = new JPanel();
-		tabbedPane.addTab("Zones", null, zonesPanel, null);
-		zonesPanel.setLayout(null);
-		
-				
-		JPanel panel_2 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		panel_2.setBounds(0, 0, 100, 300);
-		zonesPanel.add(panel_2);
-		
-		JToolBar toolBar_1 = new JToolBar();
-		toolBar_1.setFloatable(false);
-		panel_2.add(toolBar_1);
-		
-		loadZones = new JButton(new ImageIcon("textures/gui/load.png"));
-		loadZones.setToolTipText("Load zones");
-		toolBar_1.add(loadZones);
-		
-		addNewZone = new JButton(new ImageIcon("textures/gui/add.png"));
-		addNewZone.setToolTipText("Add new zone");
-		toolBar_1.add(addNewZone);
-		
-		removeZones = new JButton(new ImageIcon("textures/gui/remove.png"));
-		removeZones.setToolTipText("Remove selected zone(s)");
-		toolBar_1.add(removeZones);
-		
-		JList list = new JList(zones);
-		list.setPreferredSize(new Dimension(100, 250));
-		panel_2.add(list);
-		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder(null, "Zone", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setSize(371, 300);
-		panel_1.setLocation(100, 0);
-		zonesPanel.add(panel_1);
-		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),},
-			new RowSpec[] {
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,}));
-		
-		JLabel lblNewLabel = new JLabel("id");
-		panel_1.add(lblNewLabel, "2, 2, right, default");
-		
-		textField = new JTextField();
-		panel_1.add(textField, "4, 2, left, default");
-		textField.setColumns(10);
-		
-		JLabel lblNewLabel_1 = new JLabel("title");
-		panel_1.add(lblNewLabel_1, "2, 4, right, default");
-		
-		textField_1 = new JTextField();
-		panel_1.add(textField_1, "4, 4, left, default");
-		textField_1.setColumns(10);
-		
-		JLabel lblNewLabel_2 = new JLabel("regionsX");
-		panel_1.add(lblNewLabel_2, "2, 6, right, default");
-		
-		textField_2 = new JTextField();
-		panel_1.add(textField_2, "4, 6, left, default");
-		textField_2.setColumns(10);
-		
-		JLabel lblNewLabel_3 = new JLabel("regionsY");
-		panel_1.add(lblNewLabel_3, "2, 8, right, default");
-		
-		textField_3 = new JTextField();
-		panel_1.add(textField_3, "4, 8, left, default");
-		textField_3.setColumns(10);
-		
-		JLabel lblNewLabel_4 = new JLabel("regionWidth");
-		panel_1.add(lblNewLabel_4, "2, 10, right, default");
-		
-		textField_4 = new JTextField();
-		panel_1.add(textField_4, "4, 10, left, default");
-		textField_4.setColumns(10);
-		
-		JLabel lblNewLabel_5 = new JLabel("regionHeight");
-		panel_1.add(lblNewLabel_5, "2, 12, right, default");
-		
-		textField_5 = new JTextField();
-		panel_1.add(textField_5, "4, 12, left, default");
-		textField_5.setColumns(10);
+		Object[][] data = {};
+		DefaultTableModel dtm = new DefaultTableModel();
+		dtm.setDataVector(data, columnNames);
 		
 		this.addWindowListener(this);
-		loadZones.addActionListener(this);
-		addNewZone.addActionListener(this);
-		removeZones.addActionListener(this);
 		
-		setVisible(true);
 		pack();
+		setVisible(true);
+
 	}
 
 	@Override
@@ -264,46 +187,45 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
-		int[][] tempMap = null;
-		if (source == open) {
-		      XmlReader xmlReader = new XmlReader();
-		      FileHandle file = Gdx.files.internal("data/untitled.xml");
-		      XmlReader.Element root = null;
-		      
-				try {
-					root = xmlReader.parse(file);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-			  XmlReader.Element map = root.getChildByName("map");
-			  int width = Integer.parseInt(map.getAttribute("width"));
-			  int height = Integer.parseInt(map.getAttribute("height"));
-			  int tileWidth = Integer.parseInt(map.getAttribute("tilewidth"));
-			  int tileHeight = Integer.parseInt(map.getAttribute("tileheight"));
-
-			  
-			  if (width > 0 && height > 0) {
-				  tempMap = new int[width][height];
-			  }
-			
-		      XmlReader.Element layer = root.getChildByName("layer");
-		      XmlReader.Element data = layer.getChild(0);
-		      
-		      for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) {
-					tempMap[i][j] = Integer.parseInt(data.getChild(i*height+j).getAttribute("gid"));
-				}
-			  }
-		      
-		      Map.load(tempMap);
-		      
-		} else if (source == save) {
+		if (source == loadZones) {
+			// read from "zones" folder
+		    File folder = new File("./data/zones");
+		    File[] zoneList = folder.listFiles();
+		    
+		    Object[][] data = new Object[zoneList.length][6];
+		    for (int i = 0; i < zoneList.length; i++) {
+		    	
+			      XmlReader xmlReader = new XmlReader();
+			      FileHandle file = Gdx.files.absolute(zoneList[i].getAbsolutePath());
+			      XmlReader.Element root = null;
+			      
+					try {
+						root = xmlReader.parse(file);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				  XmlReader.Element zone = root.getChildByName("zone");
+				  int id = Integer.parseInt(zone.getAttribute("id"));
+				  int regionsX = Integer.parseInt(zone.getAttribute("regionsX"));
+				  int regionsY = Integer.parseInt(zone.getAttribute("regionsY"));
+				  int regionWidth = Integer.parseInt(zone.getAttribute("regionWidth"));
+				  int regionHeight = Integer.parseInt(zone.getAttribute("regionHeight"));
+		    	
+				data[i] = new Object[] { id, zoneList[i].getName().replace(".xml", ""), regionsX, regionsY, regionWidth, regionHeight };
+			}
+		    table.setModel(new DefaultTableModel(data, columnNames));
+		} else if (source == saveZone) {
+			int[][] tempMap = null;
 			tempMap = Map.getTiles();
 			
-			System.out.println(tempMap.length);
-			System.out.println(tempMap[0].length);
+			String id = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
+			String title = table.getModel().getValueAt(table.getSelectedRow(), 1).toString();
+			String regionsX = table.getModel().getValueAt(table.getSelectedRow(), 2).toString();
+			String regionsY = table.getModel().getValueAt(table.getSelectedRow(), 3).toString();
+			String regionWidth = table.getModel().getValueAt(table.getSelectedRow(), 4).toString();
+			String regionHeight = table.getModel().getValueAt(table.getSelectedRow(), 5).toString();
 			
 			StringWriter sw = new StringWriter();
 			 XmlWriter xml = new XmlWriter(sw);
@@ -311,12 +233,12 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 				xml.element("xml")
 				        .attribute("version", "1.0")
 				        .attribute("encoding", "UTF-8")
-				        .element("map")
-				                .attribute("version", "1.0")
-				                .attribute("width", tempMap.length)
-				                .attribute("height", tempMap[0].length)
-				                .attribute("tilewidth", "96")
-				                .attribute("tileheight", "48")
+				        .element("zone")
+				                .attribute("id", id)
+				                .attribute("regionWidth", regionWidth)
+				                .attribute("regionHeight", regionHeight)
+				                .attribute("regionsX", regionsX)
+				                .attribute("regionsY", regionsY)
 		                .pop()
 		                .element("tileset")
 		                		.element("image")
@@ -325,8 +247,7 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 		                			.attribute("height", "512")
 	                			.pop()
             			.pop()
-            			.element("layer")
-            					.element("data");
+    					.element("data");
 				
 				for (int i = 0; i < tempMap.length; i++) {
 					for (int j = 0; j < tempMap[i].length; j++) {
@@ -336,7 +257,7 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 					}
 				}
 				
-				xml.pop().pop().pop();
+				xml.pop().pop();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -344,7 +265,7 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 			 
 			 FileOutputStream out = null;
 			try {
-				out = new FileOutputStream("data/untitled.xml");
+				out = new FileOutputStream("./data/zones/" + title + ".xml");
 			} catch (FileNotFoundException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -362,15 +283,167 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 				e1.printStackTrace();
 			}
 			 
-		} else if (source == loadZones) {
-			
 		} else if (source == addNewZone) {
+			// --------
+			JPanel addNewZonePanel = new JPanel();
+			addNewZonePanel.setLayout(new FormLayout(new ColumnSpec[] {
+					FormFactory.RELATED_GAP_COLSPEC,
+					FormFactory.DEFAULT_COLSPEC,
+					FormFactory.RELATED_GAP_COLSPEC,
+					ColumnSpec.decode("default:grow"),},
+				new RowSpec[] {
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,}));
 			
+			JLabel lblNewLabel = new JLabel("ID");
+			addNewZonePanel.add(lblNewLabel, "2, 2, right, default");
+			
+			JTextField id = new JTextField();
+			addNewZonePanel.add(id, "4, 2, fill, default");
+			id.setColumns(10);
+			
+			JLabel lblNewLabel_1 = new JLabel("Title");
+			addNewZonePanel.add(lblNewLabel_1, "2, 4, right, default");
+			
+			JTextField title = new JTextField();
+			addNewZonePanel.add(title, "4, 4, fill, default");
+			title.setColumns(10);
+
+			JLabel lblNewLabel_4 = new JLabel("RegionsX");
+			addNewZonePanel.add(lblNewLabel_4, "2, 6, right, default");
+			
+			JTextField regionsX = new JTextField();
+			addNewZonePanel.add(regionsX, "4, 6, fill, default");
+			regionsX.setColumns(10);
+			
+			JLabel lblNewLabel_5 = new JLabel("RegionsY");
+			addNewZonePanel.add(lblNewLabel_5, "2, 8, right, default");
+			
+			JTextField regionsY = new JTextField();
+			addNewZonePanel.add(regionsY, "4, 8, fill, default");
+			regionsY.setColumns(10);
+			
+			JLabel lblNewLabel_2 = new JLabel("Region width");
+			addNewZonePanel.add(lblNewLabel_2, "2, 10, right, default");
+			
+			JTextField regionWidth = new JTextField();
+			addNewZonePanel.add(regionWidth, "4, 10, fill, default");
+			regionWidth.setColumns(10);
+			
+			JLabel lblNewLabel_3 = new JLabel("Region height");
+			addNewZonePanel.add(lblNewLabel_3, "2, 12, right, default");
+			
+			JTextField regionHeight = new JTextField();
+			addNewZonePanel.add(regionHeight, "4, 12, fill, default");
+			regionHeight.setColumns(10);
+			
+
+			// ----------
+	        int result = JOptionPane.showConfirmDialog(this, addNewZonePanel, "Add a new zone",
+	            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+	        
+	        if (result == JOptionPane.OK_OPTION) {
+				((DefaultTableModel) table.getModel()).addRow(new Object[] { id.getText(), title.getText(), regionsX.getText(), regionsY.getText(), regionWidth.getText(), regionHeight.getText()});
+	        }
 		} else if (source == removeZones) {
-			
-		}
-		
+	        int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete these zones?", null,
+		            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+	        
+	        if (result == JOptionPane.OK_OPTION) {
+				int[] selectedRows = table.getSelectedRows();
+				Arrays.sort(selectedRows);
+				if (selectedRows.length > 0) {
+					for (int i = selectedRows.length - 1; i >= 0 ; i--) {
+						File f = new File("./data/zones/" + table.getModel().getValueAt(table.getSelectedRow(), 1).toString() + ".xml");
+						
+						f.setWritable(true);
+						if (f.delete()) {
+							((DefaultTableModel) table.getModel()).removeRow(selectedRows[i]);	
+						}
+					}
+				}
+	        }
+		} 
 		
 		System.out.println("click");
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getClickCount() == 1) {
+			int[][] tempMap = null;
+		      XmlReader xmlReader = new XmlReader();
+		      
+		      String title = table.getModel().getValueAt(table.getSelectedRow(), 1).toString();
+		      
+		      FileHandle file = Gdx.files.internal("./data/zones/" + title + ".xml");
+		      
+		      if (file.exists()) {
+			      XmlReader.Element root = null;
+			      
+					try {
+						root = xmlReader.parse(file);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				  XmlReader.Element zone = root.getChildByName("zone");
+				  int regionWidth = Integer.parseInt(zone.getAttribute("regionWidth"));
+				  int regionHeight = Integer.parseInt(zone.getAttribute("regionHeight"));
+
+				  tempMap = new int[regionWidth][regionHeight];
+			      XmlReader.Element data = root.getChildByName("data");
+			      
+			      for (int i = 0; i < regionWidth; i++) {
+					for (int j = 0; j < regionHeight; j++) {
+						tempMap[i][j] = Integer.parseInt(data.getChild(i*regionHeight+j).getAttribute("gid"));
+					}
+				  }
+
+		      } else {
+				  int regionWidth = Integer.parseInt(table.getModel().getValueAt(table.getSelectedRow(), 4).toString());
+				  int regionHeight = Integer.parseInt(table.getModel().getValueAt(table.getSelectedRow(), 5).toString());
+
+		    	  tempMap = new int[regionWidth][regionHeight];
+		      }
+		      
+		      Map.load(tempMap); 
+		}
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}	
 }
