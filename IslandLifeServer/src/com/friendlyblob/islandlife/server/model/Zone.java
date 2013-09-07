@@ -88,6 +88,17 @@ public class Zone {
 	}
 	
 	/**
+	 * Sends data about nearby characters to all players
+	 */
+	public void nearbyCharactersBroadcast() {
+		for(int y = 0; y < regionsY; y++) {
+			for(int x = 0; x < regionsX; x++) {
+				regions[y][x].updateNearbyPlayersData();
+			}
+		}
+	}
+	
+	/**
 	 * Fills regions with information about close regions
 	 */
 	private void initializeRegions() {
@@ -95,7 +106,7 @@ public class Zone {
 		regions = new Region[regionsY][regionsX];
 		for(int y = 0; y < regionsY; y++) {
 			for(int x = 0; x < regionsX; x++) {
-				regions[y][x] = new Region();
+				regions[y][x] = new Region(x, y);
 			}
 		}
 		

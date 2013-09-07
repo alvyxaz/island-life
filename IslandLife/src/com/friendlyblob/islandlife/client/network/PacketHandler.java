@@ -22,6 +22,9 @@ public class PacketHandler {
 			case 0x03:
 				response = new MoveResponse();
 				break;
+			case 0x04:
+				response = new CharactersInRegion();
+				break;
 			default:
 				response = new UnknownPacket();
 				break;

@@ -16,8 +16,8 @@ import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.helpers.Assets;
 import com.friendlyblob.islandlife.client.network.packets.client.RequestMove;
 
-public class Player extends MovableObject{
-
+public class Player extends GameCharacter{
+	
 	public Player (int x, int y){
 		super(x, y);
 	}
@@ -30,6 +30,7 @@ public class Player extends MovableObject{
 		super.update(deltaTime);
 	}
 	
+	@Override
 	public void draw(SpriteBatch spriteBatch){
 		spriteBatch.setColor(Color.CYAN);
 		spriteBatch.draw(Assets.px, hitBox.x, hitBox.y, hitBox.width, hitBox.height);

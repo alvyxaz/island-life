@@ -13,6 +13,8 @@ import com.friendlyblob.islandlife.client.controls.Input;
 import com.friendlyblob.islandlife.client.helpers.Achievements;
 import com.friendlyblob.islandlife.client.helpers.Assets;
 import com.friendlyblob.islandlife.client.network.Connection;
+import com.friendlyblob.islandlife.client.network.PacketHandler;
+import com.friendlyblob.islandlife.client.network.packets.client.ClientVersion;
 import com.friendlyblob.islandlife.client.screens.GameScreen;
 import com.friendlyblob.islandlife.client.screens.LoadingScreen;
 
@@ -69,6 +71,17 @@ public class MyGame extends Game implements ApplicationListener {
 		setScreen(screenLoading);
     }
 
+    public void connectToServer() {
+    	try {
+			MyGame.connection = new Connection(new PacketHandler(), "localhost", 7777);
+			MyGame.connection.game = this;
+			MyGame.connection.start();
+			MyGame.connection.sendPacket(new ClientVersion(5));
+		} catch (Exception e){
+			System.out.println();
+		}
+    }
+    
     public void render () {
     	Input.update();
 		getScreen().render(Gdx.graphics.getDeltaTime());

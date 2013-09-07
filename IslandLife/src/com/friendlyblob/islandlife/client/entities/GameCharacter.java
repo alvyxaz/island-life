@@ -1,10 +1,13 @@
 package com.friendlyblob.islandlife.client.entities;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.friendlyblob.islandlife.client.MyGame;
+import com.friendlyblob.islandlife.client.helpers.Assets;
 import com.friendlyblob.islandlife.client.network.packets.client.RequestMove;
 
-public class MovableObject {
+public class GameCharacter extends GameObject {
 
 	public Rectangle hitBox;
 	
@@ -18,7 +21,9 @@ public class MovableObject {
 	private final int IDLE = 0;
 	private final int MOVING = 1;
 	
-	public MovableObject(int x, int y){
+	private float visibilityTimeOut;
+	
+	public GameCharacter(int x, int y){
 		hitBox = new Rectangle(x, y, 32, 64);
 	}
 	
@@ -39,6 +44,12 @@ public class MovableObject {
 			}
 			break;
 		}
+	}
+	
+	public void draw(SpriteBatch spriteBatch){
+		spriteBatch.setColor(1f, 1f, 1f, 0.5f);
+		spriteBatch.draw(Assets.px, hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+		spriteBatch.setColor(Color.WHITE);
 	}
 	
 	public void moveTo (int x, int y) {

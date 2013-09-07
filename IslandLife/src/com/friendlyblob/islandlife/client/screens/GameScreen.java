@@ -13,11 +13,12 @@ import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
 
 public class GameScreen extends BaseScreen{
 	private GameWorld world;
-	
 	public GameScreen(MyGame game) {
 		super(game);
 		
-		world = new GameWorld();
+		GameWorld.initialize();
+		world = GameWorld.getInstance();
+		game.connectToServer();
 	}
 
 	@Override

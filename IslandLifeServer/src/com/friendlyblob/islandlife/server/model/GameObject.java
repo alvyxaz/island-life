@@ -39,4 +39,8 @@ public class GameObject {
 		return objectId;
 	}
 	
+	public void setObjectId(int id) {
+		this.objectId = id;
+	}
+	
 }

@@ -1,20 +1,24 @@
 package com.friendlyblob.islandlife.client.gameworld;
 
+import javolution.util.FastMap;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.friendlyblob.islandlife.client.MyGame;
-import com.friendlyblob.islandlife.client.entities.MovableObject;
+import com.friendlyblob.islandlife.client.entities.GameCharacter;
 import com.friendlyblob.islandlife.client.entities.Player;
 import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
 
 public class GameWorld {
+	public static GameWorld instance;
+	
 	/*-------------------------------------
 	 * Entities
 	 */
 	private Map map;
 	public Player player;
 	
-	private MovableObject [] characters;
+	private FastMap<Integer,GameCharacter> characters = new FastMap<Integer,GameCharacter>().shared();
 	
 	/*-------------------------------------
 	 * Camera
@@ -38,10 +42,29 @@ public class GameWorld {
 		map.load(worldCam);
 
 		player = new Player(50, 50);
+		
+	}
+	
+	public void putCharacter(GameCharacter character) {
+		characters.put(character.objectId, character);
+	}
+	
+	public boolean characterExists(int id) {
+		return characters.containsKey(id);
+	}
+	
+	public GameCharacter getCharacter(int id) {
+		return characters.get(id);
 	}
 	
 	public void update(float deltaTime) {
 		player.update(deltaTime);
+		
+		// TODO optimize to avoid iterators (Make sure FastMap uses them first)
+		for (GameCharacter character : characters.values()) {
+			character.update(deltaTime);
+		}
+		
 		map.update(deltaTime);
 		
 		if (!MapEditor.enabled){
@@ -49,10 +72,15 @@ public class GameWorld {
 		}
 	}
 	
-	public void draw(SpriteBatch sb) {
-		sb.setProjectionMatrix(worldCam.combined);
-		map.draw(sb);
-		player.draw(sb);
+	public void draw(SpriteBatch spriteBatch) {
+		spriteBatch.setProjectionMatrix(worldCam.combined);
+		map.draw(spriteBatch);
+		player.draw(spriteBatch);
+		
+		// TODO optimize to avoid iterators (Make sure FastMap uses them first)
+		for (GameCharacter character : characters.values()) {
+			character.draw(spriteBatch);
+		}
 	}
 	
 	public void cameraFollowPlayer(float deltaTime){
@@ -94,4 +122,13 @@ public class GameWorld {
 	public int toWorldY(int y) {
 		return (int)(y*worldCam.zoom + map.getCamPos().y-MyGame.SCREEN_HALF_HEIGHT);
 	}
+	
+	public static void initialize() {
+		instance = new GameWorld();
+	}
+	
+	public static GameWorld getInstance() {
+		return instance;
+	}
+	
 }

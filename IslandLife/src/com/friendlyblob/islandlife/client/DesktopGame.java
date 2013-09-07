@@ -18,15 +18,6 @@ public class DesktopGame {
 		MyGame game = new MyGame(new GoogleDesktop(), actionResolver);
 		game.ads = new AdsDesktop();
 		
-		try {
-			MyGame.connection = new Connection(new PacketHandler(), "localhost", 7777);
-			MyGame.connection.game = game; // TODO think of something smarter
-			MyGame.connection.start();
-			MyGame.connection.sendPacket(new ClientVersion(5));
-		} catch (Exception e){
-			System.out.println();
-		}
-		
 		((GoogleDesktop)game.google).game = game;
         new LwjglApplication(game, "Game", (int) 800, 480, false);
 	}
