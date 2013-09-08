@@ -8,6 +8,7 @@ import com.friendlyblob.islandlife.server.model.stats.StatsSet;
 import com.friendlyblob.islandlife.server.network.GameClient;
 import com.friendlyblob.islandlife.server.network.packets.ClientPacket;
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
+import com.friendlyblob.islandlife.server.network.packets.server.NotifyCharacterMovement;
 import com.friendlyblob.islandlife.server.utils.ObjectPosition;
 
 /*
@@ -51,11 +52,12 @@ public class GameCharacter extends GameObject{
 		getPosition().offset((float) Math.cos(angle) * distanceCovered, 
 				(float) Math.sin(angle) * distanceCovered);
 		
-		// Check if destination is reached
 		int dX = (int)(movement.destinationX - getPosition().getX());
 		int dY = (int)(movement.destinationY - getPosition().getY());
 		
+		// Check if destination is reached
 		if (dX * dX + dY * dY < distanceCovered * distanceCovered) {
+			getPosition().set(movement.destinationX, movement.destinationY);
 			movement = null;
 			return true;
 		}
@@ -81,9 +83,13 @@ public class GameCharacter extends GameObject{
 		movement = new MovementData();
 		movement.destinationX = x;
 		movement.destinationY = y;
+		movement.movementSpeed = getMovementSpeed();
 		movement.timeStamp = GameTimeController.getInstance().getGameTicks();
 		
 		GameTimeController.getInstance().registerMovingObject(this);
+		
+		// Notify nearby characters about movement
+		getRegion().broadcastToCloseRegions(new NotifyCharacterMovement(getObjectId(), movement, getPosition()));
 		
 		return true;
 	}
@@ -95,6 +101,7 @@ public class GameCharacter extends GameObject{
 	public static class MovementData {
 		public float destinationX;
 		public float destinationY;
+		public int movementSpeed;
 		public int timeStamp;
 	}
 	

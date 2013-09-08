@@ -19,14 +19,14 @@ public class PacketHandler {
 			case 0x02:
 				response = new LoginSuccessful();
 				break;
-			case 0x03:
-				response = new MoveResponse();
-				break;
 			case 0x04:
 				response = new CharactersInRegion();
 				break;
 			case 0x05:
 				response = new CharacterLeftRegion();
+				break;
+			case 0x06:
+				response = new NotifyCharacterMovement();
 				break;
 			default:
 				response = new UnknownPacket();

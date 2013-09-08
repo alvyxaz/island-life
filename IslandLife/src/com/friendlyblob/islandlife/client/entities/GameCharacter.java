@@ -48,6 +48,11 @@ public class GameCharacter extends GameObject {
 		}
 	}
 	
+	public void setPosition(int x, int y) {
+		this.hitBox.x = x - (int) hitBox.width/2;
+		this.hitBox.y = y;
+	}
+	
 	public void draw(SpriteBatch spriteBatch){
 		spriteBatch.setColor(1f, 1f, 1f, 0.5f);
 		spriteBatch.draw(Assets.px, hitBox.x, hitBox.y, hitBox.width, hitBox.height);

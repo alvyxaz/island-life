@@ -18,7 +18,7 @@ public class GameWorld {
 	private Map map;
 	public Player player;
 	
-	private FastMap<Integer,GameCharacter> characters = new FastMap<Integer,GameCharacter>().shared();
+	public FastMap<Integer,GameCharacter> characters = new FastMap<Integer,GameCharacter>().shared();
 	
 	/*-------------------------------------
 	 * Camera

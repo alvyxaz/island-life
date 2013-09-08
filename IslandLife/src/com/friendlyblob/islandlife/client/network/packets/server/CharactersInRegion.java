@@ -29,8 +29,8 @@ public class CharactersInRegion extends ReceivablePacket {
 				}
 				
 				if (world.characterExists(objectId)) {
-					// TODO Don't move if arrived?
-					world.getCharacter(objectId).moveTo(x, y, speed);
+					// TODO some sort of interpolation
+					// world.getCharacter(objectId).moveTo(x, y, speed);
 				} else {
 					GameCharacter character = new GameCharacter(x, y);
 					character.objectId = objectId;

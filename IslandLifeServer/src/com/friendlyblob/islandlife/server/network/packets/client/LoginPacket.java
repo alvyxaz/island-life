@@ -66,7 +66,11 @@ public class LoginPacket extends GameClientPacket{
 					Player player = new Player();
 					getClient().setPlayer(player);
 					player.setClient(getClient());
-					getClient().sendPacket(new LoginSuccessful(player.getObjectId()));
+					getClient().sendPacket(
+							new LoginSuccessful(
+									player.getObjectId(),
+									(int) player.getPosition().getX(),
+									(int) player.getPosition().getY()));
 					break;
 				 }
 			 }

@@ -1,0 +1,50 @@
+package com.friendlyblob.islandlife.client.network.packets.server;
+
+import com.badlogic.gdx.Gdx;
+import com.friendlyblob.islandlife.client.entities.GameCharacter;
+import com.friendlyblob.islandlife.client.entities.Player;
+import com.friendlyblob.islandlife.client.gameworld.GameWorld;
+import com.friendlyblob.islandlife.client.network.packets.ReceivablePacket;
+
+public class NotifyCharacterMovement extends ReceivablePacket {
+
+	int objectId;
+	int currentX;
+	int currentY;
+	int destinationX;
+	int destinationY;
+	int movementSpeed;
+	
+	@Override
+	public boolean read() {
+		objectId = readD();
+		currentX = readD();
+		currentY = readD();
+		destinationX = readD();
+		destinationY = readD();
+		movementSpeed = readD();
+		return true;
+	}
+
+	@Override
+	public void run() {
+		Player player = GameWorld.getInstance().player;
+		if (player.objectId == objectId) {
+			System.out.println("-------------------");
+			System.out.println("FROM " + player.hitBox.x + " " + player.hitBox.y);
+			System.out.println("SERVER FROM " + currentX + " " + currentY);
+			System.out.println("DESTINATION " + destinationX + " " + destinationY);
+			System.out.println("-------------------");
+			player.setPosition(currentX, currentY);
+			player.moveTo(destinationX, destinationY, movementSpeed);
+			
+		} else {
+			GameCharacter character = GameWorld.getInstance().characters.get(objectId);
+			if (character != null) {
+				character.setPosition(currentX, currentY);
+				character.moveTo(destinationX, destinationY, movementSpeed);
+			}
+		}
+	}
+
+}

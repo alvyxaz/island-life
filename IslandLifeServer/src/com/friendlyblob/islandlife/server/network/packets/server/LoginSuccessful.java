@@ -6,7 +6,12 @@ public class LoginSuccessful extends ServerPacket {
 
 	private int playerId;
 	
-	public LoginSuccessful (int id) {
+	private int x;
+	private int y;
+	
+	public LoginSuccessful (int id, int x, int y) {
+		this.x = x;
+		this.y = y;
 		this.playerId = id;
 	}
 	
@@ -14,6 +19,8 @@ public class LoginSuccessful extends ServerPacket {
 	protected void write() {
 		writeC(0x02);
 		writeD(playerId);
+		writeD(x);
+		writeD(y);
 	}
 
 }
