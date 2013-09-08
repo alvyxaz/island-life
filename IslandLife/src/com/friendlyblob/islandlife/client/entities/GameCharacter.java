@@ -32,16 +32,18 @@ public class GameCharacter extends GameObject {
 		case IDLE :
 			break;
 		case MOVING:
+			// Checking whether object has arrived
+			if (Math.abs(targetX - hitBox.x) < movementSpeed * deltaTime && Math.abs(targetY - hitBox.y) < movementSpeed * deltaTime) {
+				state = IDLE;
+				return;
+			}
+						
 			float angle = (float)Math.atan2(targetY - hitBox.y, targetX - hitBox.x);
 			
 			// Moving 
 			hitBox.x += Math.cos(angle) * movementSpeed * deltaTime;
 			hitBox.y += Math.sin(angle) * movementSpeed * deltaTime;
 			
-			// Checking whether object has arrived
-			if (Math.abs(targetX - hitBox.x) < movementSpeed * deltaTime && Math.abs(targetY - hitBox.y) < movementSpeed * deltaTime) {
-				state = IDLE;
-			}
 			break;
 		}
 	}

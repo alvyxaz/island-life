@@ -25,6 +25,9 @@ public class PacketHandler {
 			case 0x04:
 				response = new CharactersInRegion();
 				break;
+			case 0x05:
+				response = new CharacterLeftRegion();
+				break;
 			default:
 				response = new UnknownPacket();
 				break;

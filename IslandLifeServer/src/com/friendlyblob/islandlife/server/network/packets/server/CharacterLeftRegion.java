@@ -2,18 +2,18 @@ package com.friendlyblob.islandlife.server.network.packets.server;
 
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
 
-public class LoginSuccessful extends ServerPacket {
+public class CharacterLeftRegion extends ServerPacket{
 
-	private int playerId;
+	private int characterId;
 	
-	public LoginSuccessful (int id) {
-		this.playerId = id;
+	public CharacterLeftRegion(int id) {
+		characterId = id;
 	}
 	
 	@Override
 	protected void write() {
-		writeC(0x02);
-		writeD(playerId);
+		writeC(0x05);
+		writeD(characterId);
 	}
 
 }

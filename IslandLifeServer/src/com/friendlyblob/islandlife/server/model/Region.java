@@ -7,6 +7,7 @@ import java.util.List;
 import com.friendlyblob.islandlife.server.model.actors.GameCharacter;
 import com.friendlyblob.islandlife.server.model.actors.Player;
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
+import com.friendlyblob.islandlife.server.network.packets.server.CharacterLeftRegion;
 import com.friendlyblob.islandlife.server.network.packets.server.CharactersInRegion;
 
 import javolution.util.FastMap;
@@ -35,6 +36,7 @@ public class Region {
 	
 	public void removeCharacter(GameCharacter character) {
 		characters.remove(character.getObjectId());
+		broadcastToCloseRegions(new CharacterLeftRegion(character.getObjectId()));
 	}
 	
 	/**

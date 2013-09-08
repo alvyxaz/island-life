@@ -1,7 +1,9 @@
 package com.friendlyblob.islandlife.client.network.packets.server;
 
+import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.gameworld.GameWorld;
 import com.friendlyblob.islandlife.client.network.packets.ReceivablePacket;
+import com.friendlyblob.islandlife.client.network.packets.client.NotifyReadyToPlay;
 
 public class LoginSuccessful extends ReceivablePacket{
 
@@ -15,8 +17,11 @@ public class LoginSuccessful extends ReceivablePacket{
 
 	@Override
 	public void run() {
-		System.out.println("Setting player id");
+		// Setting up a player
 		GameWorld.getInstance().player.objectId = playerId;
+		
+		// Notifying server that client is ready to play
+		MyGame.connection.sendPacket(new NotifyReadyToPlay());
 	}
 
 }

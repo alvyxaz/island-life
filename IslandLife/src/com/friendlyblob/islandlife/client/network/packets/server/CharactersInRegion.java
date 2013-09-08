@@ -23,18 +23,18 @@ public class CharactersInRegion extends ReceivablePacket {
 				int y = readD();
 				int speed = readD();
 				
+				// TODO player id doesn't work
 				if(playerId == objectId) {
 					continue;
 				}
 				
 				if (world.characterExists(objectId)) {
-//					world.getCharacter(objectId).moveTo(x, y, speed);
-//					System.out.println("UPDATE CHARACTER " + x + " " + y);
+					// TODO Don't move if arrived?
+					world.getCharacter(objectId).moveTo(x, y, speed);
 				} else {
-//					GameCharacter character = new GameCharacter(x, y);
-//					character.objectId = objectId;
-//					world.putCharacter(character);
-//					System.out.println("PUT CHARACTER");
+					GameCharacter character = new GameCharacter(x, y);
+					character.objectId = objectId;
+					world.putCharacter(character);
 				}
 			}
 		} catch (Exception e) {

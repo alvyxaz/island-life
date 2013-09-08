@@ -53,6 +53,13 @@ public class GamePacketHandler implements IPacketHandler<GameClient>,
 						break;
 				}
 				break;
+			case AUTHORIZED:
+				switch (opcode) {
+					case 0x01:
+						response = new NotifyReadyToPlay();
+						break;
+				}
+				break;
 			case IN_GAME:
 				switch (opcode) {
 					case 0x01:

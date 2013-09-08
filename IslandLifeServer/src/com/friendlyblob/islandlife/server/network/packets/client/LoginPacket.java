@@ -13,6 +13,7 @@ import com.friendlyblob.islandlife.server.model.World;
 import com.friendlyblob.islandlife.server.model.actors.Player;
 import com.friendlyblob.islandlife.server.network.GameClient;
 import com.friendlyblob.islandlife.server.network.GameClientPacket;
+import com.friendlyblob.islandlife.server.network.packets.server.LoginSuccessful;
 
 public class LoginPacket extends GameClientPacket{
 
@@ -59,14 +60,14 @@ public class LoginPacket extends GameClientPacket{
 			ResultSet rset = ps.executeQuery();
 			
 			 while (rset.next()) {
-				 if (rset.getInt(1) > 0) {
-					 getClient().setState(GameClient.GameClientState.IN_GAME);
-					 // TODO fetch player data from database and attach Player object to connection
-					 Player player = new Player();
-					 getClient().setPlayer(player);
-					 player.setClient(getClient());
-					 World.getInstance().addPlayer(player);
-					 break;
+				if (rset.getInt(1) > 0) {
+					getClient().setState(GameClient.GameClientState.AUTHORIZED);
+					// TODO fetch player data from database and attach Player object to connection
+					Player player = new Player();
+					getClient().setPlayer(player);
+					player.setClient(getClient());
+					getClient().sendPacket(new LoginSuccessful(player.getObjectId()));
+					break;
 				 }
 			 }
 		} catch (SQLException e) {

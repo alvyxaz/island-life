@@ -48,6 +48,10 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 	
 	private Player player;
 	
+	// Whether client is detached from his character.
+	// Happens when client disconnects
+	private boolean detached;	
+	
 	public GameClient(MMOConnection<GameClient> con) {
 		super(con);
 		
@@ -61,7 +65,17 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 			throw new Error("Unable to determine localhost address.");
 		}
 
+		detached = false;
+		
 		state = GameClientState.CONNECTED;
+	}
+	
+	public void setDetached(boolean detached) {
+		this.detached = detached;
+	}
+	
+	public boolean isDetached() {
+		return detached;
 	}
 	
 	public Player getPlayer() {
@@ -94,7 +108,7 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 	}
 	
 	public void sendPacket(ServerPacket serverPacket) {
-		if (serverPacket == null) {
+		if (serverPacket == null || detached) {
 			return;
 		}
 		
@@ -174,16 +188,33 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 	}
 
 	@Override
+	/**
+	 * Launches a task that cleans up after user that disconnected.
+	 */
 	protected void onDisconnection() {
-
 		try {
-			// TODO: Execute disconnect task
+			ThreadPoolManager.getInstance().executeTask(new Runnable() {
+
+				@Override
+				public void run() {
+					if (getPlayer() != null) {
+						setDetached(true);
+						
+						// Removing player from zone
+						getPlayer().getZone().removePlayer(player);
+					}
+				}
+				
+			});
 		} catch (RejectedExecutionException e) {
 			
 		}
 	}
 
 	@Override
+	/**
+	 * Gets called if client is shut down inappropriately or lost connection.
+	 */
 	protected void onForcedDisconnection() {
 		LogRecord record = new LogRecord(Level.WARNING, "Disconnected abnormally");
 		

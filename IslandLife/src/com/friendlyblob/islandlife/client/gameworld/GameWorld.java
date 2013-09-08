@@ -49,6 +49,10 @@ public class GameWorld {
 		characters.put(character.objectId, character);
 	}
 	
+	public void removeCharacter(int id) {
+		characters.remove(id);
+	}
+	
 	public boolean characterExists(int id) {
 		return characters.containsKey(id);
 	}
