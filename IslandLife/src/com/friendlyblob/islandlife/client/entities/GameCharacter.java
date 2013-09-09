@@ -23,7 +23,8 @@ public class GameCharacter extends GameObject {
 	
 	private float visibilityTimeOut;
 	
-	public GameCharacter(int x, int y){
+	public GameCharacter(int id, int x, int y){
+		this.objectId = id;
 		hitBox = new Rectangle(x, y, 32, 64);
 	}
 	

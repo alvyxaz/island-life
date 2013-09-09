@@ -7,7 +7,7 @@ import java.util.List;
 import com.friendlyblob.islandlife.server.model.actors.GameCharacter;
 import com.friendlyblob.islandlife.server.model.actors.Player;
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
-import com.friendlyblob.islandlife.server.network.packets.server.CharacterLeftRegion;
+import com.friendlyblob.islandlife.server.network.packets.server.CharacterLeft;
 import com.friendlyblob.islandlife.server.network.packets.server.CharactersInRegion;
 
 import javolution.util.FastMap;
@@ -20,6 +20,14 @@ import javolution.util.FastMap;
  */
 public class Region {
 
+	public enum RegionSide {
+		LEFT,
+		RIGHT,
+		TOP,
+		BOTTOM,
+		NONE
+	}
+	
 	private FastMap<Integer, GameCharacter> characters;
 	
 	private Region [] closeRegions;
@@ -34,9 +42,12 @@ public class Region {
 		closeRegions = new Region [0];
 	}
 	
+	/**
+	 * Removes character from region.
+	 * @param character
+	 */
 	public void removeCharacter(GameCharacter character) {
 		characters.remove(character.getObjectId());
-		broadcastToCloseRegions(new CharacterLeftRegion(character.getObjectId()));
 	}
 	
 	/**
@@ -58,6 +69,42 @@ public class Region {
 		// Broadcast to close packet
 		for(int i = 0; i < closeRegions.length; i++) {
 			closeRegions[i].broadcast(packet);
+		}
+	}
+	
+	/**
+	 * Sends a packet to characters that are in one side of current region;
+	 * @param side
+	 * @param packet
+	 */
+	public void broadcastToSide(RegionSide side, ServerPacket packet) {
+		if (side == RegionSide.NONE) {
+			return;
+		}
+			
+		for(int i = 0; i < closeRegions.length; i++) {
+			switch(side) {
+				case LEFT:
+					if (regionX > closeRegions[i].regionX) {
+						closeRegions[i].broadcast(packet);
+					}
+					break;
+				case RIGHT:
+					if (regionX < closeRegions[i].regionX) {
+						closeRegions[i].broadcast(packet);
+					}
+					break;
+				case TOP:
+					if (regionY < closeRegions[i].regionY) {
+						closeRegions[i].broadcast(packet);
+					}
+					break;
+				case BOTTOM:
+					if (regionY > closeRegions[i].regionY) {
+						closeRegions[i].broadcast(packet);
+					}
+					break;
+			}
 		}
 	}
 

@@ -3,7 +3,7 @@ package com.friendlyblob.islandlife.client.network.packets.server;
 import com.friendlyblob.islandlife.client.gameworld.GameWorld;
 import com.friendlyblob.islandlife.client.network.packets.ReceivablePacket;
 
-public class CharacterLeftRegion extends ReceivablePacket {
+public class CharacterLeft extends ReceivablePacket {
 
 	private int characterId;
 	

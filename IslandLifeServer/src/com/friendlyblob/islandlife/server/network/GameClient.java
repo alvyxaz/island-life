@@ -216,13 +216,13 @@ public class GameClient extends MMOClient<MMOConnection<GameClient>> implements 
 	 * Gets called if client is shut down inappropriately or lost connection.
 	 */
 	protected void onForcedDisconnection() {
-		LogRecord record = new LogRecord(Level.WARNING, "Disconnected abnormally");
-		
-		record.setParameters(new Object[] {
-			this
-		});
-		
-		logAccounting.log(record);
+//		LogRecord record = new LogRecord(Level.WARNING, "Disconnected abnormally");
+//		
+//		record.setParameters(new Object[] {
+//			this
+//		});
+//		
+//		logAccounting.log(record);
 	}
 	
 	@Override

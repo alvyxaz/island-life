@@ -32,9 +32,7 @@ public class CharactersInRegion extends ReceivablePacket {
 					// TODO some sort of interpolation
 					// world.getCharacter(objectId).moveTo(x, y, speed);
 				} else {
-					GameCharacter character = new GameCharacter(x, y);
-					character.objectId = objectId;
-					world.putCharacter(character);
+					world.putCharacter(new GameCharacter(objectId, x, y));
 				}
 			}
 		} catch (Exception e) {

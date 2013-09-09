@@ -53,10 +53,10 @@ public class World {
 			@Override
 			public void run() {
 				for(Zone zone : allZones) {
-					zone.nearbyCharactersBroadcast();
+					// TODO remove or do something with it;
 				}
 			}
 			
-		}, 0, 1000); // Send all player data every second.
+		}, 0, 5000); // Send all player data every five seconds.
 	}
 }

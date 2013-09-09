@@ -18,8 +18,8 @@ import com.friendlyblob.islandlife.client.network.packets.client.RequestMove;
 
 public class Player extends GameCharacter{
 	
-	public Player (int x, int y){
-		super(x, y);
+	public Player (int id, int x, int y){
+		super(id, x, y);
 	}
 
 	public void regenerate(int x, int y){

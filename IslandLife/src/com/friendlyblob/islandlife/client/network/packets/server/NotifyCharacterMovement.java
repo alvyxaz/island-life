@@ -30,11 +30,6 @@ public class NotifyCharacterMovement extends ReceivablePacket {
 	public void run() {
 		Player player = GameWorld.getInstance().player;
 		if (player.objectId == objectId) {
-			System.out.println("-------------------");
-			System.out.println("FROM " + player.hitBox.x + " " + player.hitBox.y);
-			System.out.println("SERVER FROM " + currentX + " " + currentY);
-			System.out.println("DESTINATION " + destinationX + " " + destinationY);
-			System.out.println("-------------------");
 			player.setPosition(currentX, currentY);
 			player.moveTo(destinationX, destinationY, movementSpeed);
 			

@@ -41,7 +41,7 @@ public class GameWorld {
 		map.setWorld(this);
 		map.load(worldCam);
 
-		player = new Player(50, 50);
+		player = new Player(0, 50, 50); // TODO do not initialize until login is successful
 		
 	}
 	

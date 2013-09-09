@@ -4,9 +4,13 @@ import java.util.Map;
 
 import javolution.util.FastMap;
 
+import com.friendlyblob.islandlife.server.model.Region.RegionSide;
 import com.friendlyblob.islandlife.server.model.actors.GameCharacter;
 import com.friendlyblob.islandlife.server.model.actors.Player;
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
+import com.friendlyblob.islandlife.server.network.packets.server.CharacterAppeared;
+import com.friendlyblob.islandlife.server.network.packets.server.CharacterLeft;
+import com.friendlyblob.islandlife.server.network.packets.server.CharactersInRegion;
 
 /**
  * Represents zones that have no connection with each other,
@@ -66,25 +70,73 @@ public class Zone {
 		
 		Region oldRegion = character.getRegion();
 		
+		boolean firstAppearance = oldRegion == null;  // oldRegion is null if player just joined
+		
 		if(regions[regionY][regionX] != oldRegion) {
-			if(oldRegion != null) {
-				// True if just joined a server
-				character.getRegion().removeCharacter(character);	 	// Remove from old region
+			if(!firstAppearance) {
+				oldRegion.removeCharacter(character);	 	// Remove from old region
+				
+				// Notify players at farthest side, indicating that this character left visible area
+				oldRegion.broadcastToSide(getRegionSideByOffsetX(oldRegion.regionX, regionX, true), 
+						new CharacterLeft(character.getObjectId()));
+				oldRegion.broadcastToSide(getRegionSideByOffsetY(oldRegion.regionY, regionY, true), 
+						new CharacterLeft(character.getObjectId()));
+				
+				// Notify players at newly visible side, indicating that a new character is now visible
+				regions[regionY][regionX].broadcastToSide(getRegionSideByOffsetX(oldRegion.regionX, regionX, false), 
+						new CharacterAppeared(character));
+				regions[regionY][regionX].broadcastToSide(getRegionSideByOffsetY(oldRegion.regionY, regionY, false), 
+						new CharacterAppeared(character));
 			}
 			
-			regions[regionY][regionX].addCharacter(character);	// Add player to current region
 			character.setRegion(regions[regionY][regionX]); 	// Set new region to current
+			regions[regionY][regionX].addCharacter(character);	// Add player to current region
+			
+			// If it's the first appearance, notify nearby regions that a new character is visible
+			if (firstAppearance) {
+				character.getRegion().broadcastToCloseRegions(new CharacterAppeared(character));
+				character.sendPacket(new CharactersInRegion(character.getRegion().getVisibleCharacters()));
+			}
 		}
 	}
 	
 	/**
-	 * Removes a player from the zone and region he's in
+	 * Returns a side to which regions have changed (newly visible side)
+	 * @param flip Flips directions
+	 * @return RegionSide Return newly visible side, or invisible if flip is set to true.
+	 */
+	public RegionSide getRegionSideByOffsetX(int oldX, int newX, boolean flip) {
+		if (oldX == newX) {
+			return RegionSide.NONE;
+		}
+		
+		return (oldX < newX) ^ flip ? RegionSide.RIGHT : RegionSide.LEFT;
+	}
+	
+	/**
+	 * Returns a side to which regions have changed (newly visible side)
+	 * @param flip Flips directions
+	 * @return RegionSide Return newly visible side, or invisible if flip is set to true.
+	 */
+	public RegionSide getRegionSideByOffsetY(int oldY, int newY, boolean flip) {
+		if (oldY == newY) {
+			return RegionSide.NONE;
+		}
+		
+		return (oldY < newY) ^ flip ? RegionSide.TOP : RegionSide.BOTTOM;
+	}
+	
+	/**
+	 * Removes a player from the zone and region he's in.
+	 * Notifies nearby players about character leaving.
+	 * 
 	 * @param playerId Player's id
 	 */
 	public void removePlayer(Player player) {
 		allPlayers.remove(player.getObjectId());
 		allObjects.remove(player.getObjectId());
 		player.getRegion().removeCharacter(player);
+		player.getRegion().broadcastToCloseRegions(new CharacterLeft(player.getObjectId()));
 	}
 	
 	/**
@@ -131,7 +183,7 @@ public class Zone {
 				}
 				
 				// If has a neigbour at bottom
-				if (y > 1) {
+				if (y >= 1) {
 					bottom = true;
 					regions[y][x].addCloseRegion(regions[y-1][x]); 
 				}

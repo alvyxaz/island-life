@@ -2,11 +2,11 @@ package com.friendlyblob.islandlife.server.network.packets.server;
 
 import com.friendlyblob.islandlife.server.network.packets.ServerPacket;
 
-public class CharacterLeftRegion extends ServerPacket{
+public class CharacterLeft extends ServerPacket{
 
 	private int characterId;
 	
-	public CharacterLeftRegion(int id) {
+	public CharacterLeft(int id) {
 		characterId = id;
 	}
 	
