@@ -23,7 +23,7 @@ public class World {
 		allZones.add(new Zone());
 		
 		// Start thread to synchronize players
-		nearbyCharactersBroacastTask();
+		nearbyCharactersBroadcastTask();
 	}
 	
 	public void addPlayer(Player player) {
@@ -47,7 +47,7 @@ public class World {
 	 * Creates a thread that sends data about nearby
 	 * characters to players in nearby regions.
 	 */
-	public void nearbyCharactersBroacastTask () {
+	public void nearbyCharactersBroadcastTask () {
 		ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new Runnable() {
 
 			@Override
