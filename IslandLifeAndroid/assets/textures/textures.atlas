@@ -15,36 +15,69 @@ textures2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-gui/add
+gui/MapEditor/add
   rotate: false
   xy: 2, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-gui/load
-  rotate: false
-  xy: 36, 36
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-gui/remove
+gui/MapEditor/load
   rotate: false
   xy: 20, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-gui/save
+gui/MapEditor/remove
+  rotate: false
+  xy: 38, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+gui/MapEditor/save
+  rotate: false
+  xy: 56, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+
+textures3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+gui/ObjectEditor/add
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+gui/ObjectEditor/open
   rotate: false
   xy: 2, 20
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
+gui/ObjectEditor/remove
+  rotate: false
+  xy: 70, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+gui/ObjectEditor/save
+  rotate: false
+  xy: 36, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 
-textures3.png
+textures4.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -56,7 +89,7 @@ objects/tree
   offset: 0, 0
   index: -1
 
-textures4.png
+textures5.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

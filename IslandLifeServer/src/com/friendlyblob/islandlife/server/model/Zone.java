@@ -25,8 +25,8 @@ public class Zone {
 	private int tileWidth = 96;		// Tile width in pixels
 	private int tileHeight = 48;	// Tile height in pixels
 	
-	private int regionsX = 4;		// Zone width in regions
-	private int regionsY = 4; 		// Zone height in regions
+	private int regionsCountX = 4;		// Zone width in regions
+	private int regionsCountY = 4; 		// Zone height in regions
 	
 	private int regionWidth = 10;	// Region width in tiles
 	private int regionHeight = 10;	// Region height in tiles
@@ -50,21 +50,61 @@ public class Zone {
 	 */
 	public void addPlayer(Player player) {
 		allPlayers.put(player.getObjectId(), player);
-		allObjects.put(player.getObjectId(), player); 
+		allObjects.put(player.getObjectId(), player); 	// TODO Might have no use (if removing, remove from "remove" too)
 		player.setZone(this);
 		
-		updateRegion(player); // Might fail if teleporting to region
+		updateRegion(player);
+	}
+	
+	/**
+	 * Adding an object to the zone.
+	 * (Assigns a region for object too)
+	 * @param object
+	 */
+	public void addObject(GameObject object) {
+		object.setZone(this);
+		object.setRegion(
+				regions[getRegionY((int)object.getPosition().getY())][getRegionX((int)object.getPosition().getX())]);
+		object.getRegion().addObject(object);
+		allObjects.put(object.getObjectId(), object);
+	}
+	
+	/**
+	 * Remove an object from zone (including region).
+	 * @param object
+	 */
+	public void removeObject(GameObject object) {
+		object.setZone(null);
+		object.setRegion(null);
+		allObjects.remove(object.getObjectId());
+	}
+	
+	/**
+	 * Returns X index of a region from a given coordinate
+	 * @param x zone coordinate that gets translated into region X index
+	 * @return region X index
+	 */
+	public int getRegionX(int x) {
+		return (x/tileWidth)/regionWidth;
+	}
+	
+	/**
+	 * Returns Y index of a region from a given coordinate
+	 * @param y zone coordinate that gets translated into regions Y index
+	 * @return region y index
+	 */
+	public int getRegionY(int y) {
+		return (y/(tileHeight/2))/regionHeight;
 	}
 	
 	/**
 	 * Check whether character has moved out of current region and joined another.
 	 */
 	public void updateRegion(GameCharacter character) {
-		int regionX = (int)(character.getPosition().getX()/tileWidth)/regionWidth;
-		int regionY = (int)(character.getPosition().getY()/(tileHeight/2))/regionHeight;
+		int regionX = getRegionX((int)(character.getPosition().getX()));
+		int regionY = getRegionY((int)(character.getPosition().getY()));
 		
-		int regionHeigh;
-		if(regionX >= regionWidth || regionX < 0 || regionY >= regionHeight || regionY < 0) {
+		if(regionX >= regionsCountX || regionX < 0 || regionY >= regionsCountY || regionY < 0) {
 			return;
 		}
 		
@@ -143,8 +183,8 @@ public class Zone {
 	 * Sends data about nearby characters to all players
 	 */
 	public void nearbyCharactersBroadcast() {
-		for(int y = 0; y < regionsY; y++) {
-			for(int x = 0; x < regionsX; x++) {
+		for(int y = 0; y < regionsCountY; y++) {
+			for(int x = 0; x < regionsCountX; x++) {
 				regions[y][x].updateNearbyPlayersData();
 			}
 		}
@@ -155,23 +195,23 @@ public class Zone {
 	 */
 	private void initializeRegions() {
 
-		regions = new Region[regionsY][regionsX];
-		for(int y = 0; y < regionsY; y++) {
-			for(int x = 0; x < regionsX; x++) {
+		regions = new Region[regionsCountY][regionsCountX];
+		for(int y = 0; y < regionsCountY; y++) {
+			for(int x = 0; x < regionsCountX; x++) {
 				regions[y][x] = new Region(x, y);
 			}
 		}
 		
 		// Connecting nearby regions
-		for(int y = 0; y < regionsY; y++) {
-			for(int x = 0; x < regionsX; x++) {
+		for(int y = 0; y < regionsCountY; y++) {
+			for(int x = 0; x < regionsCountX; x++) {
 				boolean right = false;
 				boolean left = false;
 				boolean bottom = false;
 				boolean top = false;
 				
 				// If has a neigbour at right
-				if (x < regionsX-1) {
+				if (x < regionsCountX-1) {
 					right = true;
 					regions[y][x].addCloseRegion(regions[y][x+1]); 
 				}
@@ -189,7 +229,7 @@ public class Zone {
 				}
 				
 				// If has a neigbour at top
-				if (y < regionsY-1) {
+				if (y < regionsCountY-1) {
 					top = true;
 					regions[y][x].addCloseRegion(regions[y+1][x]); 
 				}

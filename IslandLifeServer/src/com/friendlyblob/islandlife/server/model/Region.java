@@ -29,6 +29,7 @@ public class Region {
 	}
 	
 	private FastMap<Integer, GameCharacter> characters;
+	private FastMap<Integer, GameObject> objects;
 	
 	private Region [] closeRegions;
 	
@@ -39,7 +40,24 @@ public class Region {
 		regionX = x;
 		regionY = y;
 		characters = new FastMap<Integer, GameCharacter>().shared();
+		objects = new FastMap<Integer, GameObject>().shared();
 		closeRegions = new Region [0];
+	}
+	
+	/**
+	 * Adds an object to region's objects collection 
+	 * @param object
+	 */
+	public void addObject(GameObject object) {
+		objects.put(object.getObjectId(), object);
+	}
+	
+	/**
+	 * Removes an object from region's objects collection
+	 * @param object
+	 */
+	public void removeObject(GameObject object) {
+		objects.remove(object.getObjectId());
 	}
 	
 	/**
