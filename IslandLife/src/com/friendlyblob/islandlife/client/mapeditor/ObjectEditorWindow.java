@@ -96,9 +96,9 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 		getContentPane().add(toolBar);
 		
 		// init buttons
-		open = new JButton(new ImageIcon("textures/gui/open.png"));
+		open = new JButton(new ImageIcon("textures/gui/ObjectEditor/open.png"));
 		toolBar.add(open);
-		save = new JButton(new ImageIcon("textures/gui/save.png"));
+		save = new JButton(new ImageIcon("textures/gui/ObjectEditor/save.png"));
 		toolBar.add(save);
 		
 		setCollision = new JToggleButton("Set Collision");
@@ -128,10 +128,10 @@ public class ObjectEditorWindow extends JFrame implements WindowListener, Action
 		panel.add(toolBar_1);
 		
 		
-		addRow = new JButton(new ImageIcon("textures/gui/add.png"));
+		addRow = new JButton(new ImageIcon("textures/gui/ObjectEditor/add.png"));
 		toolBar_1.add(addRow);
 		addRow.setToolTipText("Add new row");
-		removeRow = new JButton(new ImageIcon("textures/gui/remove.png"));
+		removeRow = new JButton(new ImageIcon("textures/gui/ObjectEditor/remove.png"));
 		toolBar_1.add(removeRow);
 		removeRow.setToolTipText("Remove selected row(s)");
 		

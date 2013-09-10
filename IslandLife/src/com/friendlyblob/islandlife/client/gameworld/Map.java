@@ -10,14 +10,19 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.friendlyblob.islandlife.client.MyGame;
 import com.friendlyblob.islandlife.client.controls.Input;
+import com.friendlyblob.islandlife.client.entities.EnvironmentObject;
+import com.friendlyblob.islandlife.client.entities.GameObject;
 import com.friendlyblob.islandlife.client.helpers.Assets;
 import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
+import com.friendlyblob.islandlife.client.mapeditor.MapEditorWindow;
 import com.friendlyblob.islandlife.client.mapeditor.ObjectEditorWindow;
 
 public class Map {
 	
 	private Texture texture;
 	private TextureRegion [] tileTextures;
+	
+	private Texture tree;
 	
 	private static int [][] tiles;
 	
@@ -39,7 +44,6 @@ public class Map {
 		Assets.manager.load("textures/tiles/normal.png", Texture.class);
 		Assets.manager.finishLoading();
 		texture = Assets.manager.get("textures/tiles/normal.png", Texture.class);
-		
 		/*
 		 * Loading all textureRegions
 		 */
@@ -51,6 +55,8 @@ public class Map {
 		for (int i = 0; i < tileTextures.length; i++){
 			tileTextures[i] = new TextureRegion(texture, (i%xTextureCount)*96, (i/yTextureCount)*48, 96, 48);
 		}
+		
+		
 		
 	}
 	
@@ -94,8 +100,19 @@ public class Map {
 		// Map editor related updates
 		if (MapEditor.enabled){
 			MapEditor.cameraUpdate(worldCam, deltaTime);
-			if (Gdx.input.isTouched()) {
-				tiles[(int)tileTarget.y][(int)tileTarget.x] = MapEditor.tileTextureSelected;
+			
+			switch (MapEditor.editorWindow.tabbedPane.getSelectedIndex()) {
+				case 1:
+					if (Gdx.input.isTouched()) {
+						tiles[(int)tileTarget.y][(int)tileTarget.x] = MapEditor.selectedTileTexture;
+					}
+					break;
+				case 2:
+					if (Input.isReleasing()) {
+					GameWorld.getObjects().add(new EnvironmentObject(world.toWorldX(Input.getX()), world.toWorldY(Input.getY()), MapEditor.selectedObject));
+					}
+					break;
+				default:
 			}
 		}
 	}
@@ -112,7 +129,7 @@ public class Map {
 		int diffX = worldX - (int)tileTarget.x*TILE_WIDTH - (TILE_WIDTH/2) * ((int)tileTarget.y %2) - TILE_WIDTH/2;
 		int diffY = worldY - (int)tileTarget.y *(TILE_HEIGHT/2);
 		
-		if (diffY*2 < Math.abs(diffX)){
+		if (diffY*2 < Math.abs(diffX)) {
 			if(diffX < 0){
 				tileTarget.x += (tileTarget.y%2) == 0? -1 : 0;
 			} else {

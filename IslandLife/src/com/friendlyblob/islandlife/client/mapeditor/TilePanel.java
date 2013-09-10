@@ -38,14 +38,14 @@ public class TilePanel extends JPanel implements MouseListener {
 		g2d.drawImage(tileSheet, 0, 0, null);
 		
 		g2d.setColor(new Color(1, 1, 1, .5f));
-		g2d.fillRect(MapEditor.tileTextureSelected % 5 * 96, MapEditor.tileTextureSelected/5 * 48, 96, 48);
+		g2d.fillRect(MapEditor.selectedTileTexture % 5 * 96, MapEditor.selectedTileTexture/5 * 48, 96, 48);
 		
 		repaint();
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-		MapEditor.tileTextureSelected = me.getX() / 96 + me.getY() / 48 * 5;
+		MapEditor.selectedTileTexture = me.getX() / 96 + me.getY() / 48 * 5;
 	}
 
 	@Override

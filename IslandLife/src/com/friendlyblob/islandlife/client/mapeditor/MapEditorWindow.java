@@ -52,7 +52,8 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 	private JButton saveZone;
 	private JButton addNewZone;
 	private JButton removeZones;
-	private JTable table;
+	public JTable zoneTable;
+	public JTabbedPane tabbedPane;
 
 	private Object[] columnNames = {"id", "title", "regionsX", "regionsY", "regionWidth", "regionHeight"};
 
@@ -84,7 +85,7 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 		getContentPane().setPreferredSize(tp.getPreferredSize());
 		getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		getContentPane().add(tabbedPane);
 		
 		JPanel zonesPanel = new JPanel();
@@ -96,39 +97,39 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 		zonesPanel.add(toolBar_1);
 		toolBar_1.setFloatable(false);
 		
-		loadZones = new JButton(new ImageIcon("textures/gui/load.png"));
+		loadZones = new JButton(new ImageIcon("textures/gui/MapEditor/load.png"));
 		loadZones.setToolTipText("Load zones");
 		toolBar_1.add(loadZones);
 		
-		saveZone = new JButton(new ImageIcon("textures/gui/save.png"));
+		saveZone = new JButton(new ImageIcon("textures/gui/MapEditor/save.png"));
 		saveZone.setToolTipText("Save selected zone");
 		toolBar_1.add(saveZone);
 		toolBar_1.addSeparator();
 		
 		saveZone.addActionListener(this);
 		
-		addNewZone = new JButton(new ImageIcon("textures/gui/add.png"));
+		addNewZone = new JButton(new ImageIcon("textures/gui/MapEditor/add.png"));
 		addNewZone.setToolTipText("Add a new zone");
 		toolBar_1.add(addNewZone);
 		
-		removeZones = new JButton(new ImageIcon("textures/gui/remove.png"));
+		removeZones = new JButton(new ImageIcon("textures/gui/MapEditor/remove.png"));
 		removeZones.setToolTipText("Remove selected zone(s)");
 		toolBar_1.add(removeZones);
 		removeZones.addActionListener(this);
 		loadZones.addActionListener(this);
 		addNewZone.addActionListener(this);
-		table = new JTable();
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.addMouseListener(this);
+		zoneTable = new JTable();
+		zoneTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		zoneTable.addMouseListener(this);
 		
-		JScrollPane scrollPane = new JScrollPane(table);
+		JScrollPane scrollPane = new JScrollPane(zoneTable);
 		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 		zonesPanel.add(scrollPane);
 		
 		tabbedPane.addTab("Tiles", null, tp, null);
 		
-		JPanel panel = new JPanel();
-		tabbedPane.addTab("Objects", null, panel, null);
+		ObjectPanel op = new ObjectPanel(this);
+		tabbedPane.addTab("Objects", null, op, null);
 		
 		Object[][] data = {};
 		DefaultTableModel dtm = new DefaultTableModel();
@@ -215,17 +216,21 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 		    	
 				data[i] = new Object[] { id, zoneList[i].getName().replace(".xml", ""), regionsX, regionsY, regionWidth, regionHeight };
 			}
-		    table.setModel(new DefaultTableModel(data, columnNames));
+		    zoneTable.setModel(new DefaultTableModel(data, columnNames));
 		} else if (source == saveZone) {
+			if (zoneTable.getSelectedRow() == -1) {
+				return;
+			}
+			
 			int[][] tempMap = null;
 			tempMap = Map.getTiles();
 			
-			String id = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
-			String title = table.getModel().getValueAt(table.getSelectedRow(), 1).toString();
-			String regionsX = table.getModel().getValueAt(table.getSelectedRow(), 2).toString();
-			String regionsY = table.getModel().getValueAt(table.getSelectedRow(), 3).toString();
-			String regionWidth = table.getModel().getValueAt(table.getSelectedRow(), 4).toString();
-			String regionHeight = table.getModel().getValueAt(table.getSelectedRow(), 5).toString();
+			String id = zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 0).toString();
+			String title = zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 1).toString();
+			String regionsX = zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 2).toString();
+			String regionsY = zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 3).toString();
+			String regionWidth = zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 4).toString();
+			String regionHeight = zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 5).toString();
 			
 			StringWriter sw = new StringWriter();
 			 XmlWriter xml = new XmlWriter(sw);
@@ -353,22 +358,22 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 	            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 	        
 	        if (result == JOptionPane.OK_OPTION) {
-				((DefaultTableModel) table.getModel()).addRow(new Object[] { id.getText(), title.getText(), regionsX.getText(), regionsY.getText(), regionWidth.getText(), regionHeight.getText()});
+				((DefaultTableModel) zoneTable.getModel()).addRow(new Object[] { id.getText(), title.getText(), regionsX.getText(), regionsY.getText(), regionWidth.getText(), regionHeight.getText()});
 	        }
 		} else if (source == removeZones) {
 	        int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete these zones?", null,
 		            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 	        
 	        if (result == JOptionPane.OK_OPTION) {
-				int[] selectedRows = table.getSelectedRows();
+				int[] selectedRows = zoneTable.getSelectedRows();
 				Arrays.sort(selectedRows);
 				if (selectedRows.length > 0) {
 					for (int i = selectedRows.length - 1; i >= 0 ; i--) {
-						File f = new File("./data/zones/" + table.getModel().getValueAt(table.getSelectedRow(), 1).toString() + ".xml");
+						File f = new File("./data/zones/" + zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 1).toString() + ".xml");
 						
 						f.setWritable(true);
 						if (f.delete()) {
-							((DefaultTableModel) table.getModel()).removeRow(selectedRows[i]);	
+							((DefaultTableModel) zoneTable.getModel()).removeRow(selectedRows[i]);	
 						}
 					}
 				}
@@ -384,7 +389,7 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 			int[][] tempMap = null;
 		      XmlReader xmlReader = new XmlReader();
 		      
-		      String title = table.getModel().getValueAt(table.getSelectedRow(), 1).toString();
+		      String title = zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 1).toString();
 		      
 		      FileHandle file = Gdx.files.internal("./data/zones/" + title + ".xml");
 		      
@@ -412,8 +417,8 @@ public class MapEditorWindow extends JFrame implements WindowListener, ActionLis
 				  }
 
 		      } else {
-				  int regionWidth = Integer.parseInt(table.getModel().getValueAt(table.getSelectedRow(), 4).toString());
-				  int regionHeight = Integer.parseInt(table.getModel().getValueAt(table.getSelectedRow(), 5).toString());
+				  int regionWidth = Integer.parseInt(zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 4).toString());
+				  int regionHeight = Integer.parseInt(zoneTable.getModel().getValueAt(zoneTable.getSelectedRow(), 5).toString());
 
 		    	  tempMap = new int[regionWidth][regionHeight];
 		      }

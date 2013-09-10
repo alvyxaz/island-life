@@ -11,9 +11,10 @@ import com.friendlyblob.islandlife.client.helpers.Assets;
 public class MapEditor {
 	public static boolean enabled = false;
 	
-	public static int tileTextureSelected = 1; // Tile texture index
+	public static int selectedTileTexture = 1; // Tile texture index
+	public static int selectedObject = 1;
 	
-	static MapEditorWindow editorWindow;
+	public static MapEditorWindow editorWindow;
 	
 	/*
 	 * Method that allows moving camera freely. Used when map editor is enabled
@@ -45,7 +46,7 @@ public class MapEditor {
 		// TODO String builder, or make sure android does not execute this
 		Assets.defaultFont.drawWrapped(spriteBatch, 
 				"Map editor mode (F1)\n " +
-				"Texture selected: " + tileTextureSelected, 
+				"Texture selected: " + selectedTileTexture, 
 				MyGame.SCREEN_HALF_WIDTH, 
 				MyGame.SCREEN_HEIGHT-20, 
 				MyGame.SCREEN_HALF_WIDTH-20, 

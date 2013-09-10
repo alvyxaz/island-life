@@ -1,11 +1,15 @@
 package com.friendlyblob.islandlife.client.gameworld;
 
+import java.util.ArrayList;
+
 import javolution.util.FastMap;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.friendlyblob.islandlife.client.MyGame;
+import com.friendlyblob.islandlife.client.entities.EnvironmentObject;
 import com.friendlyblob.islandlife.client.entities.GameCharacter;
+import com.friendlyblob.islandlife.client.entities.GameObject;
 import com.friendlyblob.islandlife.client.entities.Player;
 import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
 
@@ -19,6 +23,7 @@ public class GameWorld {
 	public Player player;
 	
 	public FastMap<Integer,GameCharacter> characters = new FastMap<Integer,GameCharacter>().shared();
+	private static ArrayList<EnvironmentObject> objects = new ArrayList<EnvironmentObject>();
 	
 	/*-------------------------------------
 	 * Camera
@@ -42,7 +47,7 @@ public class GameWorld {
 		map.load(worldCam);
 
 		player = new Player(0, 50, 50); // TODO do not initialize until login is successful
-		
+		objects.add(new EnvironmentObject(50, 50, MapEditor.selectedObject));
 	}
 	
 	public void putCharacter(GameCharacter character) {
@@ -81,6 +86,10 @@ public class GameWorld {
 		map.draw(spriteBatch);
 		player.draw(spriteBatch);
 		
+		for (GameObject go : objects) {
+			go.draw(spriteBatch);
+		}
+		
 		// TODO optimize to avoid iterators (Make sure FastMap uses them first)
 		for (GameCharacter character : characters.values()) {
 			character.draw(spriteBatch);
@@ -111,6 +120,10 @@ public class GameWorld {
 	
 	public Player getPlayer() {
 		return player;
+	}
+	
+	public static ArrayList<EnvironmentObject> getObjects() {
+		return objects;
 	}
 	
 	/*
