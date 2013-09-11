@@ -34,6 +34,10 @@ public class World {
 		allZones.get(0).addPlayer(player);
 	}
 	
+	public GameObject getObject(int id) {
+		return allObjects.get(id);
+	}
+	
 	public static final class SingletonHolder {
 		public final static World INSTANCE = new World();
 	}

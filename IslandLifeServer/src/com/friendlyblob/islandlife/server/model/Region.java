@@ -153,6 +153,29 @@ public class Region {
 	}
 	
 	/**
+	 * Returns a list of objects that are in nearby regions
+	 * @return visible objects in a List
+	 */
+	public List<GameObject> getVisibleObjects() {
+		List<GameObject> visibleObjects = new ArrayList<GameObject>();
+		
+		// Current region
+		for (GameObject object : objects.values()) {
+			visibleObjects.add(object);
+		}
+		
+		// Nearby regions
+		for(int i = 0; i < closeRegions.length; i++) {
+			for(GameObject object : closeRegions[i].getObjects().values()) {
+				visibleObjects.add(object);
+			}
+		}
+
+		return visibleObjects;
+	}
+
+	
+	/**
 	 * Returns a list of characters that are in nearby regions
 	 * @return visible characters in a List
 	 */
@@ -191,5 +214,9 @@ public class Region {
 	
 	public FastMap<Integer, GameCharacter> getCharacters() {
 		return characters;
+	}
+	
+	public FastMap<Integer, GameObject> getObjects() {
+		return objects;
 	}
 }

@@ -50,7 +50,6 @@ public class Zone {
 	 */
 	public void addPlayer(Player player) {
 		allPlayers.put(player.getObjectId(), player);
-		allObjects.put(player.getObjectId(), player); 	// TODO Might have no use (if removing, remove from "remove" too)
 		player.setZone(this);
 		
 		updateRegion(player);
@@ -174,7 +173,6 @@ public class Zone {
 	 */
 	public void removePlayer(Player player) {
 		allPlayers.remove(player.getObjectId());
-		allObjects.remove(player.getObjectId());
 		player.getRegion().removeCharacter(player);
 		player.getRegion().broadcastToCloseRegions(new CharacterLeft(player.getObjectId()));
 	}
