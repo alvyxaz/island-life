@@ -14,6 +14,12 @@ import com.friendlyblob.islandlife.server.utils.ObjectPosition;
  */
 public class GameObject {
 	
+	public static enum GameObjectType {
+		PLAYER,
+		MOB,	// Mobile object (Monster, animal, etc.)
+		NPC		// Non mobile object (Most likely a person you can "Talk" to)
+	}
+	
 	private int objectId;
 	private ObjectPosition position;
 	
@@ -23,6 +29,22 @@ public class GameObject {
 	private GameObject target;
 	
 	private List<GameObject> targetedBy = new FastList<GameObject>().shared();
+	
+	private GameObjectType type;
+	
+	
+	public void setType(GameObjectType type) {
+		this.type = type;
+	}
+	
+	
+	public GameObjectType getType() {
+		return type;
+	}
+	
+	public GameObject getTarget() {
+		return target;
+	}
 	
 	/**
 	 * Sets objects target to a given object 
