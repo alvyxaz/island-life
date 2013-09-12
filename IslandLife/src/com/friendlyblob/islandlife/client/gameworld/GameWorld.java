@@ -1,17 +1,22 @@
 package com.friendlyblob.islandlife.client.gameworld;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javolution.util.FastMap;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.friendlyblob.islandlife.client.MyGame;
+import com.friendlyblob.islandlife.client.controls.Input;
 import com.friendlyblob.islandlife.client.entities.EnvironmentObject;
 import com.friendlyblob.islandlife.client.entities.GameCharacter;
 import com.friendlyblob.islandlife.client.entities.GameObject;
 import com.friendlyblob.islandlife.client.entities.Player;
 import com.friendlyblob.islandlife.client.mapeditor.MapEditor;
+import com.friendlyblob.islandlife.client.screens.BaseScreen;
+import com.friendlyblob.islandlife.client.screens.GameScreen;
+import com.friendlyblob.islandlife.client.screens.ZoneLoadingScreen;
 
 public class GameWorld {
 	public static GameWorld instance;
@@ -22,8 +27,12 @@ public class GameWorld {
 	private Map map;
 	public Player player;
 	
+	public MyGame game;
+	
 	public FastMap<Integer,GameCharacter> characters = new FastMap<Integer,GameCharacter>().shared();
 	private static ArrayList<EnvironmentObject> objects = new ArrayList<EnvironmentObject>();
+	
+	public static HashMap<String, String> environmentObjectTypes = new HashMap<String, String>();
 	
 	/*-------------------------------------
 	 * Camera
@@ -67,6 +76,10 @@ public class GameWorld {
 	}
 	
 	public void update(float deltaTime) {
+		if (Input.isReleasing()) {
+			game.setScreen(new ZoneLoadingScreen(game, "water"));
+		}
+		
 		player.update(deltaTime);
 		
 		// TODO optimize to avoid iterators (Make sure FastMap uses them first)
@@ -112,6 +125,14 @@ public class GameWorld {
 		}
 		
 		worldCam.update();
+	}
+	
+	public void loadZone(String title) {
+		
+	}
+	
+	public void setGame(MyGame game) {
+		this.game = game;
 	}
 	
 	public Map getMap() {

@@ -18,6 +18,7 @@ public class GameScreen extends BaseScreen{
 		
 		GameWorld.initialize();
 		world = GameWorld.getInstance();
+		world.setGame(game);
 		game.connectToServer();
 	}
 

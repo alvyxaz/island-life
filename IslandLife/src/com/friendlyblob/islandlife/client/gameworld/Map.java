@@ -36,6 +36,8 @@ public class Map {
 	
 	private GameWorld world;
 	
+	private static boolean infinite;
+	
 	public Map() {
 		/*
 		 * Loading main assets. 
@@ -68,12 +70,22 @@ public class Map {
 		int endX = Math.min(startX + MyGame.SCREEN_WIDTH/TILE_WIDTH+3, tiles[0].length);
 		int endY = Math.min(startY + MyGame.SCREEN_HEIGHT/(TILE_HEIGHT/2)+2, tiles.length);
 		
-		for (int y = startY; y < endY; y++){
-			for(int x = startX; x < endX; x++){
-				if (y < tiles.length && y >= 0 && x < tiles[y].length && x >= 0)
-					spriteBatch.draw(tileTextures[tiles[y][x]], x*TILE_WIDTH + y%2 * TILE_WIDTH/2, y * TILE_HEIGHT/2);
+		if (!infinite) {
+			for (int y = startY; y < endY; y++){
+				for(int x = startX; x < endX; x++){
+					if (y < tiles.length && y >= 0 && x < tiles[y].length && x >= 0)
+						spriteBatch.draw(tileTextures[tiles[y][x]], x*TILE_WIDTH + y%2 * TILE_WIDTH/2, y * TILE_HEIGHT/2);
+				}
+			}
+		} else {
+			for (int y = startY; y < endY; y++){
+				for(int x = startX; x < endX; x++){
+					if (y < tiles.length && y >= 0 && x < tiles[y].length && x >= 0)
+						spriteBatch.draw(tileTextures[tiles[0][0]], x*TILE_WIDTH + y%2 * TILE_WIDTH/2, y * TILE_HEIGHT/2);
+				}
 			}
 		}
+
 	}
 	
 	ObjectEditorWindow objectEditor = null;
@@ -160,6 +172,10 @@ public class Map {
 	
 	public static void load(int[][] map) {
 		tiles = map;
+	}
+	
+	public static void setInfinite(boolean value) {
+		infinite = value;
 	}
 	
 	public static int[][] getTiles() {
